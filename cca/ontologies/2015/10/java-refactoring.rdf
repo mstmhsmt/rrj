@@ -1,0 +1,626 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://codinuum.com/ontologies/2015/10/java-refactoring#"
+     xml:base="http://codinuum.com/ontologies/2015/10/java-refactoring"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:src="http://codinuum.com/ontologies/2012/10/source-code-entity#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:jref="http://codinuum.com/ontologies/2015/10/java-refactoring#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:java-entity="http://codinuum.com/ontologies/2012/10/java-entity#">
+    <owl:Ontology rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring">
+        <owl:imports rdf:resource="http://codinuum.com/ontologies/2012/10/java-entity"/>
+        <owl:imports rdf:resource="http://codinuum.com/ontologies/2012/10/source-code-entity"/>
+        <owl:imports rdf:resource="http://codinuum.com/ontologies/2013/01/clone"/>
+        <owl:imports rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring"/>
+        <dc:creator xml:lang="en">Codinuum Software Lab</dc:creator>
+        <dc:title xml:lang="en">An Ontology for Java Refactoring</dc:title>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#AddParameter -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#AddParameter">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Addition"/>
+        <rdfs:label xml:lang="en">Add Parameter</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#AddParameterAndAddMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#AddParameterAndAddMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Addition"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#Addition -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#Addition">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#Change -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#Change">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ChangeBidirectionalAssociationToUnidirection -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ChangeBidirectionalAssociationToUnidirection">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Change"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ChangeSignatureAndPullUpMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ChangeSignatureAndPullUpMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Change"/>
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#PullUp"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ChangeUnidirectionalAssociationToBidirectional -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ChangeUnidirectionalAssociationToBidirectional">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Change"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ConsolidateConditionalExpression -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ConsolidateConditionalExpression">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ExtractClass -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ExtractClass">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Extraction"/>
+        <rdfs:label xml:lang="en">Extract Class</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ExtractInterface -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ExtractInterface">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Extraction"/>
+        <rdfs:label xml:lang="en">Extract Interface</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ExtractMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ExtractMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Extraction"/>
+        <rdfs:label xml:lang="en">Extract Method</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ExtractSubclass -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ExtractSubclass">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Extraction"/>
+        <rdfs:label xml:lang="en">Extract Subclass</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ExtractSuperclass -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ExtractSuperclass">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Extraction"/>
+        <rdfs:label xml:lang="en">Extract Superclass</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ExtractSuperclassAndMoveField -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ExtractSuperclassAndMoveField">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Extraction"/>
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Move"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ExtractSuperclassAndMoveMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ExtractSuperclassAndMoveMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Extraction"/>
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Move"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ExtractVariable -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ExtractVariable">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Extraction"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#Extraction -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#Extraction">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#FormTemplateMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#FormTemplateMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#HideDelegate -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#HideDelegate">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#HideMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#HideMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#InlineClass -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#InlineClass">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Inlining"/>
+        <rdfs:label xml:lang="en">Inline Class</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#InlineMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#InlineMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Inlining"/>
+        <rdfs:label xml:lang="en">Inline Method</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#InlineTemp -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#InlineTemp">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Inlining"/>
+        <rdfs:label xml:lang="en">Inline Temp</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#Inlining -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#Inlining">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#IntroduceAssertion -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#IntroduceAssertion">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Introduction"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#IntroduceExplainingVariable -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#IntroduceExplainingVariable">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Introduction"/>
+        <rdfs:label xml:lang="en">Introduce Explaining Variable</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#IntroduceLocalExtension -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#IntroduceLocalExtension">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Introduction"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#IntroduceNullObject -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#IntroduceNullObject">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Introduction"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#IntroduceParameterObject -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#IntroduceParameterObject">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Introduction"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#Introduction -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#Introduction">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#LocalMoveField -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#LocalMoveField">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Move"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#LocalMoveMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#LocalMoveMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Move"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#LocalVariableRename -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#LocalVariableRename">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Rename"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#MethodVisibilityDecreased -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#MethodVisibilityDecreased">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#MethodVisibilityIncreased -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#MethodVisibilityIncreased">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#Move -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#Move">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#MoveClass -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#MoveClass">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Move"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#MoveField -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#MoveField">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Move"/>
+        <rdfs:label xml:lang="en">Move Field</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#MoveMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#MoveMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Move"/>
+        <rdfs:label xml:lang="en">Move Method</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#PullUp -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#PullUp">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#PullUpConstructorBody -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#PullUpConstructorBody">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#PullUp"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#PullUpField -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#PullUpField">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#PullUp"/>
+        <rdfs:label xml:lang="en">Pull Up Field</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#PullUpMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#PullUpMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#PullUp"/>
+        <rdfs:label xml:lang="en">Pull Up Method</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#PushDown -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#PushDown">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#PushDownField -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#PushDownField">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#PushDown"/>
+        <rdfs:label xml:lang="en">Push Down Field</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#PushDownMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#PushDownMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#PushDown"/>
+        <rdfs:label xml:lang="en">Push Down Method</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#QuasiExtractInterface -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#QuasiExtractInterface">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Extraction"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#QuasiExtractSuperclass -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#QuasiExtractSuperclass">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Extraction"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#QuasiPullUpField -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#QuasiPullUpField">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#PullUp"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#QuasiPullUpMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#QuasiPullUpMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#PullUp"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#QuasiPushDownMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#QuasiPushDownMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#PushDown"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#Removal -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#Removal">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#RemoveAssignmentsToParameters -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#RemoveAssignmentsToParameters">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Removal"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#RemoveControlFlag -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#RemoveControlFlag">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Removal"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#RemoveMiddleMan -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#RemoveMiddleMan">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Removal"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#RemoveParameter -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#RemoveParameter">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Removal"/>
+        <rdfs:label xml:lang="en">Remove Parameter</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#RemoveParameterAndRemoveMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#RemoveParameterAndRemoveMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Removal"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#Rename -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#Rename">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#RenameAndPullUpMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#RenameAndPullUpMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#PullUp"/>
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Rename"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#RenameClass -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#RenameClass">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Rename"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#RenameMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#RenameMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Rename"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#RenamePackage -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#RenamePackage">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Rename"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#RenameParameter -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#RenameParameter">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Rename"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ReplaceConstructorWithFactoryMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ReplaceConstructorWithFactoryMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Replacement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ReplaceExceptionWithTest -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ReplaceExceptionWithTest">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Replacement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ReplaceMagicNumberWithSymbolicConstant -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ReplaceMagicNumberWithSymbolicConstant">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Replacement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ReplaceNestedConditionalWithGuardClauses -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ReplaceNestedConditionalWithGuardClauses">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Replacement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ReplaceParameterWithMethod -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ReplaceParameterWithMethod">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Replacement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#ReplaceTempWithQuery -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#ReplaceTempWithQuery">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/java-refactoring#Replacement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#Replacement -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#Replacement">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/java-refactoring#SeparateQueryFromModifier -->
+
+    <owl:Class rdf:about="http://codinuum.com/ontologies/2015/10/java-refactoring#SeparateQueryFromModifier">
+        <rdfs:subClassOf rdf:resource="http://codinuum.com/ontologies/2015/10/refactoring#Refactoring"/>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+

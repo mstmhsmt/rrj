@@ -1,0 +1,78 @@
+
+DEFINE input:inference "ont.cpi"
+
+PREFIX fb:   <http://codinuum.com/fb/>
+PREFIX ent:  <http://codinuum.com/fact/entity/>
+PREFIX rel:  <http://codinuum.com/fact/version/release/>
+PREFIX ext:  <http://codinuum.com/fact/external/>
+PREFIX src:  <http://codinuum.com/ontologies/2012/10/source-code-entity#>
+PREFIX ver:  <http://codinuum.com/ontologies/2012/10/versioning#>
+PREFIX chg:  <http://codinuum.com/ontologies/2012/10/primitive-change#>
+PREFIX java: <http://codinuum.com/ontologies/2012/10/java-entity#>
+PREFIX c:    <http://codinuum.com/ontologies/2012/10/c-entity#>
+
+
+SELECT DISTINCT ?ty ?ty_ ?tyname ?tyname_ ?meth ?meth_
+?methodName ?className
+(?ty AS ?originalType)
+(?ty_ AS ?modifiedType)
+(?tyname AS ?originalTypeName)
+(?tyname_ AS ?modifiedTypeName)
+(?dims AS ?originalTypeDims)
+(?dims_ AS ?modifiedTypeDims)
+(?meth AS ?originalMethod)
+(?meth_ AS ?modifiedMethod)
+(?class AS ?originalClass)
+(?class_ AS ?modifiedClass)
+(CONCAT(?className,".",?methodName) AS ?GROUP)
+WHERE {
+
+  ?meth a java:MethodDeclaration ;
+        java:returnTypeName ?tyname ;
+        src:child2 ?ty ;
+        java:inTypeDeclaration ?class ;
+        chg:mappedTo ?meth_ .
+
+  OPTIONAL {
+    ?meth java:name ?methodName .
+  }
+
+  ?meth_ a java:MethodDeclaration ;
+         java:returnTypeName ?tyname_ ;
+        java:inTypeDeclaration ?class_ .
+
+  ?class a java:TypeDeclaration ;
+         java:name ?className .
+
+  ?class_ a java:TypeDeclaration ;
+          java:name ?className_ .
+
+  ?ty a java:Type ;
+      chg:mappedTo ?ty_ .
+
+  ?ty_ a java:Type .
+
+  OPTIONAL {
+    ?ty java:dimensions ?dims .
+  }
+  OPTIONAL {
+    ?ty_ java:dimensions ?dims_ .
+  }
+
+  FILTER (EXISTS {
+    ?x src:parent+ ?ty ;
+       chg:relabeled ?x_ .
+    ?x_ src:parent+ ?ty_ .
+  } || EXISTS {
+    ?x src:parent+ ?ty ;
+       chg:removal [] .
+  } || EXISTS {
+    ?x_ src:parent+ ?ty_ ;
+        chg:addition [] .
+  } || EXISTS {
+    ?ty chg:changedTo ?ty_ .
+  } || EXISTS {
+    ?ty chg:relabeled ?ty_ .
+  })
+
+}

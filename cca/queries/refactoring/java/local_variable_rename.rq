@@ -1,0 +1,80 @@
+
+DEFINE input:inference "ont.cpi"
+
+PREFIX fb:   <http://codinuum.com/fb/>
+PREFIX ent:  <http://codinuum.com/fact/entity/>
+PREFIX rel:  <http://codinuum.com/fact/version/release/>
+PREFIX ext:  <http://codinuum.com/fact/external/>
+PREFIX src:  <http://codinuum.com/ontologies/2012/10/source-code-entity#>
+PREFIX ver:  <http://codinuum.com/ontologies/2012/10/versioning#>
+PREFIX chg:  <http://codinuum.com/ontologies/2012/10/primitive-change#>
+PREFIX java: <http://codinuum.com/ontologies/2012/10/java-entity#>
+PREFIX c:    <http://codinuum.com/ontologies/2012/10/c-entity#>
+
+
+SELECT DISTINCT ?dtor ?dtor_ ?v ?v_
+(?v AS ?originalVariable)
+(?v_ AS ?modifiedVariable)
+(?vname AS ?originalVariableName)
+(?vname_ AS ?modifiedVariableName)
+(?dtor AS ?originalDtor)
+(?dtor_ AS ?modifiedDtor)
+(?cname AS ?className)
+(?mname AS ?methodName)
+(?meth AS ?originalMethod)
+(?meth_ AS ?modifiedMethod)
+(CONCAT(?className,".",?methodName) AS ?GROUP)
+WHERE {
+
+  {
+    SELECT DISTINCT ?dtor ?dtor_ ?vname ?vname_ ?meth ?meth_ ?ty ?ty_
+    WHERE {
+      {
+        ?for a java:EnhancedForStatement ;
+             src:child0 ?dtor .
+
+        ?dtor a java:ForHeader ;
+              java:inMethodOrConstructor ?meth ;
+              chg:relabeled ?dtor_ ;
+              java:name ?vname .
+      }
+      UNION
+      {
+        ?dtor a java:VariableDeclarator ;
+              java:inMethodOrConstructor ?meth ;
+              chg:relabeled ?dtor_ ;
+              java:name ?vname .
+      }
+      UNION
+      {
+        ?dtor a java:Resource ;
+              java:name ?vname ;
+              java:inMethodOrConstructor ?meth ;
+              chg:relabeled ?dtor_ .
+      }
+      ?dtor_ java:inMethodOrConstructor ?meth_ ;
+             java:name ?vname_ .
+
+    } GROUP BY ?dtor ?dtor_ ?vname ?vname_ ?meth ?meth_ ?ty ?ty_
+  }
+
+  OPTIONAL {
+    ?v java:declaredBy ?dtor ;
+       java:name ?vname ;
+       chg:relabeled ?v_ .
+    ?v_ java:declaredBy ?dtor_ ;
+        java:name ?vname_ .
+  }
+
+  ?meth java:inTypeDeclaration ?class ;
+        chg:mappedTo ?meth_ .
+
+  OPTIONAL {
+    ?meth java:name ?mname .
+  }
+
+  ?class a java:TypeDeclaration ;
+         java:name ?cname .
+
+}
+

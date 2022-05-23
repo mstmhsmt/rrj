@@ -1,0 +1,71 @@
+
+DEFINE input:inference "ont.cpi"
+
+PREFIX fb:   <http://codinuum.com/fb/>
+PREFIX ent:  <http://codinuum.com/fact/entity/>
+PREFIX rel:  <http://codinuum.com/fact/version/release/>
+PREFIX svn:  <http://codinuum.com/fact/version/svn/revision/>
+PREFIX src:  <http://codinuum.com/ontologies/2012/10/source-code-entity#>
+PREFIX ver:  <http://codinuum.com/ontologies/2012/10/versioning#>
+PREFIX chg:  <http://codinuum.com/ontologies/2012/10/primitive-change#>
+PREFIX java: <http://codinuum.com/ontologies/2012/10/java-entity#>
+PREFIX c:    <http://codinuum.com/ontologies/2012/10/c-entity#>
+
+SELECT DISTINCT ?vdtor ?vdtor_ ?fname ?fname_
+(?vdtor AS ?originalField)
+(?vdtor_ AS ?modifiedField)
+(?fname AS ?originalFieldName)
+(?fname_ AS ?modifiedFieldName)
+(?class AS ?originalClass)
+(?class_ AS ?modifiedClass)
+(?fname AS ?GROUP)
+WHERE {
+
+  {
+    SELECT DISTINCT ?vdtor ?vdtor_ ?fname ?fname_ ?class ?class_ ?cfqn ?cfqn_
+    WHERE {
+      ?vdtor a java:VariableDeclarator ;
+             src:parent ?field ;
+             java:name ?fname ;
+             chg:relabeled ?vdtor_ .
+
+      ?vdtor_ a java:VariableDeclarator ;
+              src:parent ?field_ ;
+              java:name ?fname_ .
+
+      ?field a java:FieldDeclaration ;
+             java:inTypeDeclaration ?class ;
+             chg:mappedTo ?field_ .
+
+      ?field_ a java:FieldDeclaration ;
+              java:inTypeDeclaration ?class_ .
+
+      ?class a java:TypeDeclaration ;
+             java:fullyQualifiedName ?cfqn ;
+             chg:mappedTo ?class_ .
+
+      ?class_ a java:TypeDeclaration ;
+              java:fullyQualifiedName ?cfqn_ .
+    } GROUP BY ?vdtor ?vdtor_ ?fname ?fname_ ?class ?class_ ?cfqn ?cfqn_
+  }
+
+  ?class ver:version ?ver .
+  ?class_ ver:version ?ver_ .
+
+  ?ver ver:next ?ver_ .
+
+  FILTER EXISTS {
+    ?x java:declaredBy ?vdtor .
+
+    ?x_ java:declaredBy ?vdtor_ .
+
+    ?s a java:Statement ;
+       ^java:inStatement ?x ;
+       chg:mappedTo ?s_ .
+
+    ?s_ a java:Statement ;
+        ^java:inStatement ?x_ .
+  }
+
+}
+

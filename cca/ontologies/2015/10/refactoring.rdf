@@ -1,0 +1,223 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY dc "http://purl.org/dc/elements/1.1/" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY ref "http://codinuum.com/ontologies/2015/10/refactoring#" >
+    <!ENTITY src "http://codinuum.com/ontologies/2012/10/source-code-entity#" >
+]>
+
+
+<rdf:RDF xmlns="http://codinuum.com/ontologies/2015/10/refactoring#"
+     xml:base="http://codinuum.com/ontologies/2015/10/refactoring"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:ref="http://codinuum.com/ontologies/2015/10/refactoring#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:src="http://codinuum.com/ontologies/2012/10/source-code-entity#">
+    <owl:Ontology rdf:about="http://codinuum.com/ontologies/2015/10/refactoring">
+        <dc:title xml:lang="en">An Ontology for Refactoring</dc:title>
+        <dc:creator xml:lang="en">Codinuum Software Lab</dc:creator>
+        <owl:imports rdf:resource="http://codinuum.com/ontologies/2012/10/primitive-change"/>
+        <owl:imports rdf:resource="http://codinuum.com/ontologies/2012/10/source-code-entity"/>
+        <owl:imports rdf:resource="http://codinuum.com/ontologies/2013/01/clone"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#addedEntity -->
+
+    <owl:ObjectProperty rdf:about="&ref;addedEntity"/>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#eliminatedEntity -->
+
+    <owl:ObjectProperty rdf:about="&ref;eliminatedEntity">
+        <rdfs:range rdf:resource="&src;Entity"/>
+        <rdfs:domain rdf:resource="&ref;Refactoring"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#eliminatedName -->
+
+    <owl:ObjectProperty rdf:about="&ref;eliminatedName">
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#filePair -->
+
+    <owl:ObjectProperty rdf:about="&ref;filePair">
+        <rdfs:range rdf:resource="http://codinuum.com/ontologies/2012/10/primitive-change#FilePair"/>
+        <rdfs:domain rdf:resource="&ref;Refactoring"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#introducedEntity -->
+
+    <owl:ObjectProperty rdf:about="&ref;introducedEntity">
+        <rdfs:range rdf:resource="&src;Entity"/>
+        <rdfs:domain rdf:resource="&ref;Refactoring"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#introducedName -->
+
+    <owl:ObjectProperty rdf:about="&ref;introducedName">
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#modifiedEntity -->
+
+    <owl:ObjectProperty rdf:about="&ref;modifiedEntity">
+        <rdfs:range rdf:resource="&src;Entity"/>
+        <rdfs:domain rdf:resource="&ref;Refactoring"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#modifiedName -->
+
+    <owl:ObjectProperty rdf:about="&ref;modifiedName">
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#movedEntity -->
+
+    <owl:ObjectProperty rdf:about="&ref;movedEntity">
+        <rdfs:range rdf:resource="&src;Entity"/>
+        <rdfs:domain rdf:resource="&ref;Refactoring"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#originalEntity -->
+
+    <owl:ObjectProperty rdf:about="&ref;originalEntity">
+        <rdfs:range rdf:resource="&src;Entity"/>
+        <rdfs:domain rdf:resource="&ref;Refactoring"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#originalName -->
+
+    <owl:ObjectProperty rdf:about="&ref;originalName">
+        <rdfs:range rdf:resource="&rdfs;Literal"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#refactoring -->
+
+    <owl:ObjectProperty rdf:about="&ref;refactoring">
+        <rdfs:range rdf:resource="&ref;Refactoring"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#relatedTo -->
+
+    <owl:ObjectProperty rdf:about="&ref;relatedTo">
+        <rdf:type rdf:resource="&owl;SymmetricProperty"/>
+        <rdfs:range rdf:resource="http://codinuum.com/ontologies/2012/10/primitive-change#TextEntityPair"/>
+        <rdfs:domain rdf:resource="&ref;Refactoring"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#removedEntity -->
+
+    <owl:ObjectProperty rdf:about="&ref;removedEntity"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#eliminatedName -->
+
+    <owl:DatatypeProperty rdf:about="&ref;eliminatedName">
+        <rdfs:domain rdf:resource="&ref;Refactoring"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#introducedName -->
+
+    <owl:DatatypeProperty rdf:about="&ref;introducedName">
+        <rdfs:domain rdf:resource="&ref;Refactoring"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#modifiedName -->
+
+    <owl:DatatypeProperty rdf:about="&ref;modifiedName">
+        <rdfs:domain rdf:resource="&ref;Refactoring"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#originalName -->
+
+    <owl:DatatypeProperty rdf:about="&ref;originalName">
+        <rdfs:domain rdf:resource="&ref;Refactoring"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://codinuum.com/ontologies/2015/10/refactoring#Refactoring -->
+
+    <owl:Class rdf:about="&ref;Refactoring"/>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 3.4.2) http://owlapi.sourceforge.net -->
+

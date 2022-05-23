@@ -1,0 +1,138 @@
+
+DEFINE input:inference "ont.cpi"
+
+PREFIX fb:   <http://codinuum.com/fb/>
+PREFIX ent:  <http://codinuum.com/fact/entity/>
+PREFIX rel:  <http://codinuum.com/fact/version/release/>
+PREFIX ext:  <http://codinuum.com/fact/external/>
+PREFIX src:  <http://codinuum.com/ontologies/2012/10/source-code-entity#>
+PREFIX ver:  <http://codinuum.com/ontologies/2012/10/versioning#>
+PREFIX chg:  <http://codinuum.com/ontologies/2012/10/primitive-change#>
+PREFIX java: <http://codinuum.com/ontologies/2012/10/java-entity#>
+PREFIX c:    <http://codinuum.com/ontologies/2012/10/c-entity#>
+
+
+SELECT DISTINCT ?ty ?ty_
+(?ty AS ?originalType)
+(?ty_ AS ?modifiedType)
+(?tyname AS ?originalTypeName)
+(?tyname_ AS ?modifiedTypeName)
+(?dims AS ?originalTypeDims)
+(?dims_ AS ?modifiedTypeDims)
+(?fname AS ?originalFieldName)
+(?fname_ AS ?modifiedFieldName)
+(?class AS ?originalClass)
+(?class_ AS ?modifiedClass)
+(?cfqn AS ?GROUP)
+WHERE {
+
+  {
+    SELECT DISTINCT ?vdtor ?vdtor_ ?fname ?fname_ ?class ?class_ ?cfqn ?cfqn_ ?field ?field_
+    WHERE {
+      ?vdtor a java:VariableDeclarator ;
+             src:parent ?field ;
+             java:name ?fname ;
+             chg:mappedTo ?vdtor_ .
+
+      ?vdtor_ a java:VariableDeclarator ;
+              src:parent ?field_ ;
+              java:name ?fname_ .
+
+      ?field a java:FieldDeclaration ;
+             java:inTypeDeclaration ?class ;
+             chg:mappedTo ?field_ .
+
+      ?field_ a java:FieldDeclaration ;
+              java:inTypeDeclaration ?class_ .
+
+      ?class a java:TypeDeclaration ;
+             java:fullyQualifiedName ?cfqn ;
+             chg:mappedTo ?class_ .
+
+      ?class_ a java:TypeDeclaration ;
+              java:fullyQualifiedName ?cfqn_ .
+
+    } GROUP BY ?vdtor ?vdtor_ ?fname ?fname_ ?class ?class_ ?cfqn ?cfqn_ ?field ?field_
+  }
+
+  ?class ver:version ?ver .
+  ?class_ ver:version ?ver_ .
+
+  ?ver ver:next ?ver_ .
+
+  # FILTER EXISTS {
+  #   ?x java:declaredBy ?vdtor .
+
+  #   ?x_ java:declaredBy ?vdtor_ .
+
+  #   ?s a java:Statement ;
+  #      ^java:inStatement ?x ;
+  #      chg:mappedTo ?s_ .
+
+  #   ?s_ a java:Statement ;
+  #       ^java:inStatement ?x_ .
+  # }
+
+  ?field src:child1 ?ty .
+  ?field_ src:child1 ?ty_ .
+
+  FILTER (EXISTS {
+    ?x src:parent+ ?ty ;
+       chg:relabeled ?x_ .
+    ?x_ src:parent+ ?ty_ .
+  } || EXISTS {
+    ?x src:parent+ ?ty ;
+       chg:removal [] .
+  } || EXISTS {
+    ?x_ src:parent+ ?ty_ ;
+        chg:addition [] .
+  } || EXISTS {
+    ?ty chg:changedTo ?ty_ .
+  } || EXISTS {
+    ?ty chg:relabeled ?ty_ .
+  })
+
+  {
+    SELECT DISTINCT ?ty ?ty_ ?tyname ?dims
+    WHERE {
+      ?ty a java:Type ;
+          a ?cat OPTION (INFERENCE NONE) ;
+          chg:mappedTo ?ty_ .
+      {
+        GRAPH <http://codinuum.com/ont/cpi> {
+          ?cat rdfs:label ?tyname0 .
+          BIND (STR(?tyname0) AS ?tyname)
+        }
+      }
+      UNION
+      {
+        ?ty java:name ?tyname .
+      }
+      OPTIONAL {
+        ?ty java:dimensions ?dims .
+      }
+    } GROUP BY ?ty ?ty_ ?tyname ?dims
+  }
+
+  {
+    SELECT DISTINCT ?ty_ ?tyname_ ?dims_
+    WHERE {
+      ?ty_ a java:Type ;
+           a ?cat_ OPTION (INFERENCE NONE) .
+      {
+        GRAPH <http://codinuum.com/ont/cpi> {
+          ?cat_ rdfs:label ?tyname0_ .
+          BIND (STR(?tyname0_) AS ?tyname_)
+        }
+      }
+      UNION
+      {
+        ?ty_ java:name ?tyname_ .
+      }
+      OPTIONAL {
+        ?ty_ java:dimensions ?dims_ .
+      }
+    } GROUP BY ?ty_ ?tyname_ ?dims_
+  }
+
+}
