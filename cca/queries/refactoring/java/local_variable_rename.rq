@@ -27,7 +27,7 @@ SELECT DISTINCT ?dtor ?dtor_ ?v ?v_
 WHERE {
 
   {
-    SELECT DISTINCT ?dtor ?dtor_ ?vname ?vname_ ?meth ?meth_ ?ty ?ty_
+    SELECT DISTINCT ?dtor ?dtor_ ?vname ?meth
     WHERE {
       {
         ?for a java:EnhancedForStatement ;
@@ -52,10 +52,35 @@ WHERE {
               java:inMethodOrConstructor ?meth ;
               chg:relabeled ?dtor_ .
       }
-      ?dtor_ java:inMethodOrConstructor ?meth_ ;
-             java:name ?vname_ .
 
-    } GROUP BY ?dtor ?dtor_ ?vname ?vname_ ?meth ?meth_ ?ty ?ty_
+    } GROUP BY ?dtor ?dtor_ ?vname ?meth
+  }
+
+  {
+    SELECT DISTINCT ?dtor_ ?vname_ ?meth_
+    WHERE {
+      {
+        ?for_ a java:EnhancedForStatement ;
+              src:child0 ?dtor_ .
+
+        ?dtor_ a java:ForHeader ;
+               java:inMethodOrConstructor ?meth_ ;
+               java:name ?vname_ .
+      }
+      UNION
+      {
+        ?dtor_ a java:VariableDeclarator ;
+               java:inMethodOrConstructor ?meth_ ;
+               java:name ?vname_ .
+      }
+      UNION
+      {
+        ?dtor_ a java:Resource ;
+               java:name ?vname_ ;
+               java:inMethodOrConstructor ?meth_ .
+      }
+
+    } GROUP BY ?dtor_ ?vname_ ?meth_
   }
 
   OPTIONAL {

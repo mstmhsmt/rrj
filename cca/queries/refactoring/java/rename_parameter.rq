@@ -36,8 +36,16 @@ WHERE {
           java:name ?pname_ ;
           java:inMethodOrConstructor ?meth_ .
 
-  ?meth java:inTypeDeclaration ?class ;
-        chg:mappedTo ?meth_ .
+  ?meth java:inTypeDeclaration ?class .
+
+  FILTER (EXISTS {
+    ?meth chg:mappedTo ?meth_ .
+  } || EXISTS {
+    [] a java:MethodBody ;
+       src:parent ?meth ;
+       chg:mappedTo [ a java:MethodBody ;
+                      src:parent ?meth_ ] .
+  })
 
   OPTIONAL {
     ?meth java:name ?mname .

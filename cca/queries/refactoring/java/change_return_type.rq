@@ -27,52 +27,84 @@ SELECT DISTINCT ?ty ?ty_ ?tyname ?tyname_ ?meth ?meth_
 (CONCAT(?className,".",?methodName) AS ?GROUP)
 WHERE {
 
-  ?meth a java:MethodDeclaration ;
-        java:returnTypeName ?tyname ;
-        src:child2 ?ty ;
-        java:inTypeDeclaration ?class ;
-        chg:mappedTo ?meth_ .
+  {
+    SELECT DISTINCT ?meth ?meth_ ?class ?class_ ?ty ?ty_
+                    ?tyname ?tyname_ ?className ?className_ ?methodName ?dims ?dims_
+    WHERE {
+      ?meth a java:MethodDeclaration ;
+            java:returnTypeName ?tyname ;
+            src:child2 ?ty ;
+            java:inTypeDeclaration ?class ;
+            chg:mappedTo ?meth_ .
 
-  OPTIONAL {
-    ?meth java:name ?methodName .
+      OPTIONAL {
+        ?meth java:name ?methodName .
+      }
+
+      ?meth_ a java:MethodDeclaration ;
+             java:returnTypeName ?tyname_ ;
+             src:child2 ?ty_ ;
+             java:inTypeDeclaration ?class_ .
+
+      ?class a java:TypeDeclaration ;
+             java:name ?className .
+
+      ?class_ a java:TypeDeclaration ;
+              java:name ?className_ .
+
+      FILTER (EXISTS {
+        ?ty a java:ReferenceType ;
+            chg:mappedTo ?ty_ .
+        ?ty_ a java:ReferenceType .
+        ?x 
+           src:parent+ ?ty .
+        ?x_ 
+            src:parent+ ?ty_ .
+        FILTER (EXISTS {
+          ?x chg:changedTo ?x_ .
+        } || EXISTS {
+          ?x chg:relabeled ?x_ .
+        })
+      } || EXISTS {
+        ?ty a java:ReferenceType ;
+            chg:mappedTo ?ty_ .
+        ?x 
+           src:parent+ ?ty ;
+           chg:removal [] .
+      } || EXISTS {
+        ?ty_ a java:ReferenceType ;
+             ^chg:mappedTo ?ty .
+        ?x_ 
+            src:parent+ ?ty_ ;
+            chg:addition [] .
+      } || EXISTS {
+        ?ty chg:changedTo ?ty_ .
+      } || EXISTS {
+        ?ty chg:relabeled ?ty_ .
+
+      } || EXISTS {
+        ?ty_ a java:ReferenceType ;
+             chg:addition [] .
+        ?ty chg:mappedTo ?x_ .
+        ?x_ 
+            src:parent+ ?ty_ .
+      } || EXISTS {
+        ?ty a java:ReferenceType ;
+            chg:removal [] .
+        ?x 
+           chg:mappedTo ?ty_ ;
+           src:parent+ ?ty .
+      })
+
+      OPTIONAL {
+        ?ty java:dimensions ?dims .
+      }
+      OPTIONAL {
+        ?ty_ java:dimensions ?dims_ .
+      }
+
+    } GROUP BY ?meth ?meth_ ?class ?class_ ?ty ?ty_
+               ?tyname ?tyname_ ?className ?className_ ?methodName ?dims ?dims_
   }
-
-  ?meth_ a java:MethodDeclaration ;
-         java:returnTypeName ?tyname_ ;
-        java:inTypeDeclaration ?class_ .
-
-  ?class a java:TypeDeclaration ;
-         java:name ?className .
-
-  ?class_ a java:TypeDeclaration ;
-          java:name ?className_ .
-
-  ?ty a java:Type ;
-      chg:mappedTo ?ty_ .
-
-  ?ty_ a java:Type .
-
-  OPTIONAL {
-    ?ty java:dimensions ?dims .
-  }
-  OPTIONAL {
-    ?ty_ java:dimensions ?dims_ .
-  }
-
-  FILTER (EXISTS {
-    ?x src:parent+ ?ty ;
-       chg:relabeled ?x_ .
-    ?x_ src:parent+ ?ty_ .
-  } || EXISTS {
-    ?x src:parent+ ?ty ;
-       chg:removal [] .
-  } || EXISTS {
-    ?x_ src:parent+ ?ty_ ;
-        chg:addition [] .
-  } || EXISTS {
-    ?ty chg:changedTo ?ty_ .
-  } || EXISTS {
-    ?ty chg:relabeled ?ty_ .
-  })
 
 }

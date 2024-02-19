@@ -3,7 +3,7 @@
 '''
   rrj.py
 
-  Copyright 2020-2022 Chiba Institute of Technology
+  Copyright 2020-2024 Chiba Institute of Technology
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ def set_status(mes):
 
 def shutdown_virtuoso(proj_id, port, pw=VIRTUOSO_PW):
     if misc.is_virtuoso_running(port):
-        logger.info('shutting down virtuoso for {}...'.format(proj_id))
+        logger.info(f'shutting down virtuoso for {proj_id}...')
         fb_dir = os.path.join(FB_DIR, proj_id)
         v = virtuoso.base(dbdir=fb_dir, pw=pw, port=port)
         v.shutdown_server()
@@ -102,6 +102,12 @@ def main():
                         action='store_true',
                         help='analyze unmodified files as well')
 
+    parser.add_argument('--no-rename-rectification', dest='no_rename_rectification',
+                        action='store_true', help='disable rename rectification')
+
+    parser.add_argument('--no-move-rectification', dest='no_move_rectification',
+                        action='store_true', help='disable move rectification')
+
     parser.add_argument('--exit-on-failure', dest='keep_going',
                         action='store_false',
                         help='exits on failures')
@@ -136,9 +142,11 @@ def main():
 
     ensure_dir(LOG_DIR)
 
-    log_file = os.path.join(LOG_DIR, f'{proj_id}.rrj.log')
+    log_proj_dir = os.path.join(LOG_DIR, f'{proj_id}')
 
-    ensure_dir(os.path.dirname(log_file))
+    ensure_dir(log_proj_dir)
+
+    log_file = os.path.join(LOG_DIR, log_proj_dir, 'rrj.log')
 
     setup_logger(logger,
                  log_level,
@@ -192,7 +200,8 @@ def main():
                       fact_encoding=Enc.FDLCO,
                       fact_hash_algo=HashAlgo.MD5,
                       fact_no_compress=True,
-                      aggressive=False,
+                      aggressive=args.no_move_rectification,
+                      no_rename_rectification=args.no_rename_rectification,
                       dump_delta=False,
                       fact_for_delta=False,
                       keep_going=keep_going,
@@ -242,11 +251,11 @@ def main():
     set_status('building factbase...')
     fb = FB(proj_id, mem=args.mem, pw=args.pw, port=args.port,
             build_only=False, conf=conf,
-            url_base_path=URL_BASE_PATH)
+            url_base_path=URL_BASE_PATH, logdir=log_proj_dir)
     fb.setup()
 
     if not args.debug:
-        set_status('shutting down virtuoso (port={})...'.format(args.port))
+        set_status(f'shutting down virtuoso (port={args.port})...')
         shutdown_virtuoso(proj_id, args.port, pw=args.pw)
 
     set_status('finished.')

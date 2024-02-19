@@ -3,7 +3,7 @@
 '''
   misc.py
 
-  Copyright 2020-2022 Chiba Institute of Technology
+  Copyright 2020-2024 Chiba Institute of Technology
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -122,14 +122,18 @@ def clear_dirs(dirs):
 def is_virtuoso_running(port):
     b = False
     for p in psutil.process_iter():
-        if p.name() == 'virtuoso-t':
-            try:
-                for conn in p.connections(kind='tcp'):
-                    if conn.laddr.port == port:
-                        b = True
+        try:
+            if p.name() == 'virtuoso-t':
+                try:
+                    for conn in p.connections(kind='tcp'):
+                        if conn.laddr.port == port:
+                            b = True
+                            break
+                    if b:
                         break
-                if b:
-                    break
-            except Exception as e:
-                logger.warning(f'{e}: port={port}')
+                except Exception as e:
+                    logger.warning(f'{e}: port={port}')
+        except Exception as e:
+            logger.warning(f'{e}: port={port}')
+            pass
     return b

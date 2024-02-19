@@ -3,7 +3,7 @@
 '''
   setup_factbase.py
 
-  Copyright 2018-2022 Chiba Institute of Technology
+  Copyright 2018-2024 Chiba Institute of Technology
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -85,7 +85,7 @@ def set_status(mes):
 class FB(object):
     def __init__(self, proj_id, mem=4, pw=VIRTUOSO_PW, port=VIRTUOSO_PORT,
                  build_only=False, conf=None,
-                 set_status=set_status, url_base_path='..'):
+                 set_status=set_status, url_base_path='..', logdir=os.curdir):
         self._proj_id = proj_id
         self._mem = mem
         self._port = port
@@ -95,7 +95,7 @@ class FB(object):
         else:
             self._pw = pw
 
-        logger.info('pw={} port={}'.format(self._pw, self._port))
+        logger.info(f'pw={self._pw} port={self._port}')
 
         self._fb_dir = os.path.join(FB_DIR, self._proj_id)
         self._fact_dir = os.path.join(FACT_DIR, self._proj_id)
@@ -104,6 +104,8 @@ class FB(object):
         self._conf = conf
         self.set_status = set_status
         self._url_base_path = url_base_path
+
+        self.logdir = logdir
 
     def init_virtuoso(self, mem=4):
         stat = 0
@@ -131,7 +133,7 @@ class FB(object):
         stat = 0
         for f in self.get_fb_files():
             if os.path.exists(f):
-                logger.info('removing "%s"...' % f)
+                logger.info(f'removing "{f}"...')
                 rc = rm(f)
                 if rc != 0:
                     stat = rc
@@ -189,10 +191,11 @@ class FB(object):
                                      self._fb_dir,
                                      self._fact_dir,
                                      ['.nt.gz'],
-                                     nprocs=2,
+                                     nprocs=1,
                                      maxfiles=500,
                                      pw=self._pw,
-                                     port=self._port)
+                                     port=self._port,
+                                     logdir=self.logdir)
         return rc
 
     def load_chgpat(self):
@@ -200,13 +203,20 @@ class FB(object):
                                      self._fb_dir,
                                      self._chgpat_dir,
                                      ['.ttl'],
+                                     nprocs=1,
                                      pw=self._pw,
-                                     port=self._port)
+                                     port=self._port,
+                                     logdir=self.logdir)
         return rc
 
     def load_ont(self):
-        logger.info('{} <- {}'.format(self._fb_dir, ONT_DIR))
-        return load_ont_into_virtuoso.load(self._fb_dir, ONT_DIR, pw=self._pw, port=self._port)
+        logger.info(f'{self._fb_dir} <- {ONT_DIR}')
+        return load_ont_into_virtuoso.load(self._fb_dir,
+                                           ONT_DIR,
+                                           nprocs=1,
+                                           pw=self._pw,
+                                           port=self._port,
+                                           logdir=self.logdir)
 
     def materialize(self):
         return materialize_supplementary_fact.materialize(self._proj_id,

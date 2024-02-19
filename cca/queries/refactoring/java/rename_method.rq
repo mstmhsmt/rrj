@@ -23,52 +23,58 @@ WHERE {
 
   {
     {
-      SELECT DISTINCT (COUNT(DISTINCT ?meth0) AS ?count) (COUNT(DISTINCT ?meth0_) AS ?count_)
-      (SAMPLE(?meth0) AS ?meth) (SAMPLE(?meth0_) AS ?meth_)
-      ?msig ?class ?class_ ?ver ?ver_
+      SELECT DISTINCT ?meth ?meth_ ?mname ?mname_ ?msig ?class ?class_ ?ver ?ver_
       WHERE {
+        {
+          SELECT DISTINCT (COUNT(DISTINCT ?meth0) AS ?count) (COUNT(DISTINCT ?meth0_) AS ?count_)
+          (SAMPLE(?meth0) AS ?meth) (SAMPLE(?meth0_) AS ?meth_)
+          ?msig ?class ?class_ ?ver ?ver_
+          WHERE {
 
-        ?meth0 #a java:MethodDeclaration ;
-               java:name ?mname0 ;
-               java:signature ?msig ;
-               java:inTypeDeclaration ?class ;
-               chg:removal [] .
+            ?meth0 #a java:MethodDeclaration ;
+                   java:name ?mname0 ;
+                   java:signature ?msig ;
+                   java:inTypeDeclaration ?class ;
+                   chg:removal [] .
 
-        FILTER NOT EXISTS {
-          ?meth0 chg:mappedStablyTo [] .
+            FILTER NOT EXISTS {
+              ?meth0 chg:mappedStablyTo [] .
+            }
+
+            ?meth0_ #a java:MethodDeclaration ;
+                    java:name ?mname0_ ;
+                    java:signature ?msig ;
+                    java:inTypeDeclaration ?class_ ;
+                    chg:addition [] .
+
+            FILTER NOT EXISTS {
+              ?meth0_ ^chg:mappedStablyTo [] .
+            }
+
+            ?class chg:mappedTo ?class_ .
+
+            ?class ver:version ?ver .
+            ?class_ ver:version ?ver_ .
+
+            ?ver ver:next ?ver_ .
+
+            FILTER (?mname0 != ?mname0_)
+
+          } GROUP BY ?msig ?class ?class_ ?ver ?ver_
         }
 
-        ?meth0_ #a java:MethodDeclaration ;
-                java:name ?mname0_ ;
-                java:signature ?msig ;
-                java:inTypeDeclaration ?class_ ;
-                chg:addition [] .
+        #FILTER (?count = 1 && ?count_ = 1)
 
-        FILTER NOT EXISTS {
-          ?meth0_ ^chg:mappedStablyTo [] .
-        }
+        ?meth java:name ?mname .
+        ?meth_ java:name ?mname_ .
 
-        ?class chg:mappedTo ?class_ .
-
-        ?class ver:version ?ver .
-        ?class_ ver:version ?ver_ .
-
-        ?ver ver:next ?ver_ .
-
-        FILTER (?mname0 != ?mname0_)
-
-      } GROUP BY ?msig ?class ?class_ ?ver ?ver_
+      } GROUP BY ?meth ?meth_ ?mname ?mname_ ?msig ?class ?class_ ?ver ?ver_
     }
-
-    #FILTER (?count = 1 && ?count_ = 1)
-
-    ?meth java:name ?mname .
-    ?meth_ java:name ?mname_ .
   }
   UNION
   {
     {
-      SELECT DISTINCT ?meth ?meth_ ?mname ?mname_ ?msig ?class ?class_ ?ver ?ver_
+      SELECT DISTINCT ?meth ?meth_ ?mname ?mname_ ?msig ?msig_ ?class ?class_ ?ver ?ver_
       WHERE {
 
         {
@@ -101,7 +107,7 @@ WHERE {
 
         ?ver ver:next ?ver_ .
 
-      } GROUP BY ?meth ?meth_ ?mname ?mname_ ?msig ?class ?class_ ?ver ?ver_
+      } GROUP BY ?meth ?meth_ ?mname ?mname_ ?msig ?msig_ ?class ?class_ ?ver ?ver_
     }
   }
 
@@ -157,6 +163,27 @@ WHERE {
     FILTER (STRLEN(?v) > 3)
 
   } || EXISTS {
+    ?x a java:Entity ;
+       a java:InvocationOrInstanceCreation ;
+       java:inMethod ?meth ;
+       java:name ?xname ;
+       chg:mappedTo ?x_ .
+
+    ?x_ a java:Entity ;
+        a java:InvocationOrInstanceCreation ;
+        java:inMethod ?meth_ ;
+        java:name ?xname_ .
+
+    ?y a java:Entity ;
+       java:inInvocationOrInstanceCreation ?x ;
+       java:name ?yname ;
+       chg:mappedTo ?y_ .
+
+    ?y_ a java:Entity ;
+        java:inInvocationOrInstanceCreation ?x_ ;
+        java:name ?yname .
+
+  } || EXISTS {
     ?ivk a java:Invocation ;
          java:mayInvokeMethod ?meth ;
          chg:mappedTo ?ivk_ .
@@ -182,22 +209,22 @@ WHERE {
   #   ?x_ java:declaredBy ?p_ .
   # })
 
-  FILTER NOT EXISTS {
-    ?x a java:Parameter ;
-       java:inMethod ?m ;
-       chg:mappedTo ?x_ .
-    ?x_ a java:Parameter ;
-        java:inMethod ?meth_ .
-    FILTER (?m != ?meth)
-  }
-  FILTER NOT EXISTS {
-    ?x a java:Parameter ;
-       java:inMethod ?meth ;
-       chg:mappedTo ?x_ .
-    ?x_ a java:Parameter ;
-        java:inMethod ?m_ .
-    FILTER (?m_ != ?meth_)
-  }
+  # FILTER NOT EXISTS {
+  #   ?x a java:Parameter ;
+  #      java:inMethod ?m ;
+  #      chg:mappedTo ?x_ .
+  #   ?x_ a java:Parameter ;
+  #       java:inMethod ?meth_ .
+  #   FILTER (?m != ?meth)
+  # }
+  # FILTER NOT EXISTS {
+  #   ?x a java:Parameter ;
+  #      java:inMethod ?meth ;
+  #      chg:mappedTo ?x_ .
+  #   ?x_ a java:Parameter ;
+  #       java:inMethod ?m_ .
+  #   FILTER (?m_ != ?meth_)
+  # }
 
   FILTER (?mname != "<init>")
   FILTER (?mname_ != "<init>")

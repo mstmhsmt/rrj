@@ -55,10 +55,13 @@ WHERE {
   ?ver ver:next ?ver_ .
 
   FILTER EXISTS {
-    ?x java:declaredBy ?vdtor .
-
-    ?x_ java:declaredBy ?vdtor_ .
-
+    {
+      ?x java:declaredBy ?vdtor .
+      ?x_ java:declaredBy ?vdtor_ .
+    } UNION {
+      ?x java:declaredBy ?field .
+      ?x_ java:declaredBy ?field_ .
+    }
     ?s a java:Statement ;
        ^java:inStatement ?x ;
        chg:mappedTo ?s_ .

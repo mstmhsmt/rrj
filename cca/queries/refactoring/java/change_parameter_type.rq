@@ -65,25 +65,49 @@ WHERE {
         } GROUP BY ?param ?param_ ?tyname ?tyname_ ?dims ?dims_ ?pname ?pname_
         ?meth ?meth_ ?ty ?ty_
       }
-      ?ty a java:Type ;
-          chg:mappedTo ?ty_ .
-
-      ?ty_ a java:Type .
 
       FILTER (EXISTS {
-        ?x src:parent+ ?ty ;
-           chg:relabeled ?x_ .
-        ?x_ src:parent+ ?ty_ .
+        ?ty a java:ReferenceType ;
+            chg:mappedTo ?ty_ .
+        ?ty_ a java:ReferenceType .
+        ?x 
+           src:parent+ ?ty .
+        ?x_ 
+            src:parent+ ?ty_ .
+        FILTER (EXISTS {
+          ?x chg:changedTo ?x_ .
+        } || EXISTS {
+          ?x chg:relabeled ?x_ .
+        })
       } || EXISTS {
-        ?x src:parent+ ?ty ;
+        ?ty a java:ReferenceType ;
+            chg:mappedTo ?ty_ .
+        ?x 
+           src:parent+ ?ty ;
            chg:removal [] .
       } || EXISTS {
-        ?x_ src:parent+ ?ty_ ;
+        ?ty_ a java:ReferenceType ;
+             ^chg:mappedTo ?ty .
+        ?x_ 
+            src:parent+ ?ty_ ;
             chg:addition [] .
       } || EXISTS {
         ?ty chg:changedTo ?ty_ .
       } || EXISTS {
         ?ty chg:relabeled ?ty_ .
+
+      } || EXISTS {
+        ?ty_ a java:ReferenceType ;
+             chg:addition [] .
+        ?ty chg:mappedTo ?x_ .
+        ?x_ 
+            src:parent+ ?ty_ .
+      } || EXISTS {
+        ?ty a java:ReferenceType ;
+            chg:removal [] .
+        ?x 
+           chg:mappedTo ?ty_ ;
+           src:parent+ ?ty .
       })
 
     } GROUP BY ?param ?param_ ?tyname ?tyname_ ?dims ?dims_ ?pname ?pname_

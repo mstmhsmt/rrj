@@ -76,28 +76,11 @@ WHERE {
   ?field src:child1 ?ty .
   ?field_ src:child1 ?ty_ .
 
-  FILTER (EXISTS {
-    ?x src:parent+ ?ty ;
-       chg:relabeled ?x_ .
-    ?x_ src:parent+ ?ty_ .
-  } || EXISTS {
-    ?x src:parent+ ?ty ;
-       chg:removal [] .
-  } || EXISTS {
-    ?x_ src:parent+ ?ty_ ;
-        chg:addition [] .
-  } || EXISTS {
-    ?ty chg:changedTo ?ty_ .
-  } || EXISTS {
-    ?ty chg:relabeled ?ty_ .
-  })
-
   {
-    SELECT DISTINCT ?ty ?ty_ ?tyname ?dims
+    SELECT DISTINCT ?ty ?tyname ?dims
     WHERE {
       ?ty a java:Type ;
-          a ?cat OPTION (INFERENCE NONE) ;
-          chg:mappedTo ?ty_ .
+          a ?cat OPTION (INFERENCE NONE) .
       {
         GRAPH <http://codinuum.com/ont/cpi> {
           ?cat rdfs:label ?tyname0 .
@@ -111,7 +94,7 @@ WHERE {
       OPTIONAL {
         ?ty java:dimensions ?dims .
       }
-    } GROUP BY ?ty ?ty_ ?tyname ?dims
+    } GROUP BY ?ty ?tyname ?dims
   }
 
   {
@@ -134,5 +117,49 @@ WHERE {
       }
     } GROUP BY ?ty_ ?tyname_ ?dims_
   }
+
+  FILTER (EXISTS {
+    ?ty a java:ReferenceType ;
+        chg:mappedTo ?ty_ .
+    ?ty_ a java:ReferenceType .
+    ?x 
+       src:parent+ ?ty .
+    ?x_ 
+        src:parent+ ?ty_ .
+    FILTER (EXISTS {
+      ?x chg:changedTo ?x_ .
+    } || EXISTS {
+      ?x chg:relabeled ?x_ .
+    })
+  } || EXISTS {
+    ?ty a java:ReferenceType ;
+        chg:mappedTo ?ty_ .
+    ?x 
+       src:parent+ ?ty ;
+       chg:removal [] .
+  } || EXISTS {
+    ?ty_ a java:ReferenceType ;
+         ^chg:mappedTo ?ty .
+    ?x_ 
+        src:parent+ ?ty_ ;
+        chg:addition [] .
+  } || EXISTS {
+    ?ty chg:changedTo ?ty_ .
+  } || EXISTS {
+    ?ty chg:relabeled ?ty_ .
+
+  } || EXISTS {
+    ?ty_ a java:ReferenceType ;
+         chg:addition [] .
+    ?ty chg:mappedTo ?x_ .
+    ?x_ 
+        src:parent+ ?ty_ .
+  } || EXISTS {
+    ?ty a java:ReferenceType ;
+        chg:removal [] .
+    ?x 
+       chg:mappedTo ?ty_ ;
+       src:parent+ ?ty .
+  })
 
 }

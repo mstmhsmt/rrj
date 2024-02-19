@@ -41,70 +41,118 @@ WHERE {
             SELECT DISTINCT ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_
             WHERE {
               {
-                SELECT DISTINCT ?dtor ?dtor_ ?vname ?meth ?ty ?ty_
+                SELECT DISTINCT ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_
                 WHERE {
                   {
-                    ?for a java:EnhancedForStatement ;
-                         src:child0 ?dtor .
+                    SELECT DISTINCT ?dtor ?vname ?meth ?ty
+                    WHERE {
+                      {
+                        ?for a java:EnhancedForStatement ;
+                             src:child0 ?dtor .
 
-                    ?dtor a java:ForHeader ;
-                          src:child1 ?ty ;
-                          java:name ?vname ;
-                          java:inMethodOrConstructor ?meth ;
-                          chg:mappedTo ?dtor_ .
+                        ?dtor a java:ForHeader ;
+                              src:child1 ?ty ;
+                              java:name ?vname ;
+                              java:inMethodOrConstructor ?meth .
+                      }
+                      UNION
+                      {
+                        ?dtor a java:VariableDeclarator ;
+                              java:name ?vname ;
+                              java:inVariableDeclaration ?decl ;
+                              java:inMethodOrConstructor ?meth .
 
-                    ?ty chg:mappedTo ?ty_ .
+                        ?decl src:child1 ?ty .
+                      }
+                      UNION
+                      {
+                        ?dtor a java:Resource ;
+                              java:name ?vname ;
+                              src:child1 ?ty ;
+                              java:inMethodOrConstructor ?meth .
+                      }
+
+                    } GROUP BY ?dtor ?vname ?meth ?ty
+                  }
+
+                  ?dtor chg:mappedTo ?dtor_ .
+
+                  {
+                    ?for_ a java:EnhancedForStatement ;
+                          src:child0 ?dtor_ .
+
+                    ?dtor_ a java:ForHeader ;
+                           src:child1 ?ty_ ;
+                           java:name ?vname_ ;
+                           java:inMethodOrConstructor ?meth_ .
                   }
                   UNION
                   {
-                    ?dtor a java:VariableDeclarator ;
-                          java:name ?vname ;
-                          java:inVariableDeclaration ?decl ;
-                          java:inMethodOrConstructor ?meth ;
-                          chg:mappedTo ?dtor_ .
+                    ?dtor_ a java:VariableDeclarator ;
+                           java:name ?vname_ ;
+                           java:inVariableDeclaration ?decl_ ;
+                           java:inMethodOrConstructor ?meth_ .
 
-                    ?decl src:child1 ?ty .
-                    ?ty chg:mappedTo ?ty_ .
+                    ?decl_ src:child1 ?ty_ .
                   }
                   UNION
                   {
-                    ?dtor a java:Resource ;
-                          java:name ?vname ;
-                          src:child1 ?ty ;
-                          java:inMethodOrConstructor ?meth ;
-                          chg:mappedTo ?dtor_ .
-
-                    ?ty chg:mappedTo ?ty_ .
+                    ?dtor_ a java:Resource ;
+                           java:name ?vname_ ;
+                           src:child1 ?ty_ ;
+                           java:inMethodOrConstructor ?meth_ .
                   }
-                } GROUP BY ?dtor ?dtor_ ?vname ?meth ?ty ?ty_
-              }
-              {
-                ?for_ a java:EnhancedForStatement ;
-                      src:child0 ?dtor_ .
 
-                ?dtor_ a java:ForHeader ;
-                       src:child1 ?ty_ ;
-                       java:name ?vname_ ;
-                       java:inMethodOrConstructor ?meth_ .
+                } GROUP BY ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_
               }
-              UNION
-              {
-                ?dtor_ a java:VariableDeclarator ;
-                       java:name ?vname_ ;
-                       java:inVariableDeclaration ?decl_ ;
-                       java:inMethodOrConstructor ?meth_ .
 
-                ?decl_ src:child1 ?ty_ .
-              }
-              UNION
-              {
-                ?dtor_ a java:Resource ;
-                       java:name ?vname_ ;
-                       src:child1 ?ty_ ;
-                       java:inMethodOrConstructor ?meth_ .
-              }
+              FILTER (EXISTS {
+                ?ty a java:ReferenceType ;
+                    chg:mappedTo ?ty_ .
+                ?ty_ a java:ReferenceType .
+                ?x 
+                   src:parent+ ?ty .
+                ?x_ 
+                    src:parent+ ?ty_ .
+                FILTER (EXISTS {
+                  ?x chg:changedTo ?x_ .
+                } || EXISTS {
+                  ?x chg:relabeled ?x_ .
+                })
+              } || EXISTS {
+                ?ty a java:ReferenceType ;
+                    chg:mappedTo ?ty_ .
+                ?x 
+                   src:parent+ ?ty ;
+                   chg:removal [] .
+              } || EXISTS {
+                ?ty_ a java:ReferenceType ;
+                     ^chg:mappedTo ?ty .
+                ?x_ 
+                    src:parent+ ?ty_ ;
+                    chg:addition [] .
+              } || EXISTS {
+                ?ty chg:changedTo ?ty_ .
+              } || EXISTS {
+                ?ty chg:relabeled ?ty_ .
+
+              } || EXISTS {
+                ?ty_ a java:ReferenceType ;
+                     chg:addition [] .
+                ?ty chg:mappedTo ?x_ .
+                ?x_ 
+                    src:parent+ ?ty_ .
+              } || EXISTS {
+                ?ty a java:ReferenceType ;
+                    chg:removal [] .
+                ?x 
+                   chg:mappedTo ?ty_ ;
+                   src:parent+ ?ty .
+              })
+
             } GROUP BY ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_
           }
+
           OPTIONAL {
             ?v java:declaredBy ?dtor ;
                java:name ?vname ;
@@ -112,29 +160,13 @@ WHERE {
             ?v_ java:declaredBy ?dtor_ ;
                 java:name ?vname_ .
           }
+
         } GROUP BY ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_ ?v ?v_
       }
-
-      FILTER (EXISTS {
-        ?x src:parent+ ?ty ;
-           chg:relabeled ?x_ .
-        ?x_ src:parent+ ?ty_ .
-      } || EXISTS {
-        ?x src:parent+ ?ty ;
-           chg:removal [] .
-      } || EXISTS {
-        ?x_ src:parent+ ?ty_ ;
-            chg:addition [] .
-      } || EXISTS {
-        ?ty chg:changedTo ?ty_ .
-      } || EXISTS {
-        ?ty chg:relabeled ?ty_ .
-      })
 
       OPTIONAL {
         ?meth java:name ?mname .
       }
-
       OPTIONAL {
         ?meth_ java:name ?mname_ .
       }
@@ -143,11 +175,10 @@ WHERE {
   }
 
   {
-    SELECT DISTINCT ?ty ?ty_ ?tyname ?dims
+    SELECT DISTINCT ?ty ?tyname ?dims
     WHERE {
       ?ty a java:Type ;
-          a ?cat OPTION (INFERENCE NONE) ;
-          chg:mappedTo ?ty_ .
+          a ?cat OPTION (INFERENCE NONE) .
       {
         GRAPH <http://codinuum.com/ont/cpi> {
           ?cat rdfs:label ?tyname0 .
@@ -161,7 +192,7 @@ WHERE {
       OPTIONAL {
         ?ty java:dimensions ?dims .
       }
-    } GROUP BY ?ty ?ty_ ?tyname ?dims
+    } GROUP BY ?ty ?tyname ?dims
   }
 
   {
