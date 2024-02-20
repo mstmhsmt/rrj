@@ -264,7 +264,7 @@ class FB(object):
                               url_base_path=self._url_base_path)
 
     def setup(self):
-        logger.info('setting up FB for "{}"...'.format(self._proj_id))
+        logger.info(f'setting up FB for "{self._proj_id}"...')
 
         # build FB
         self.set_status('building FB...')
