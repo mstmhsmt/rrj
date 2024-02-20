@@ -71,6 +71,13 @@ WHERE {
                               src:child1 ?ty ;
                               java:inMethodOrConstructor ?meth .
                       }
+                      UNION
+                      {
+                        ?dtor a java:CatchParameter ;
+                              java:name ?vname ;
+                              src:child1 ?ty ;
+                              java:inMethodOrConstructor ?meth .
+                      }
 
                     } GROUP BY ?dtor ?vname ?meth ?ty
                   }
@@ -98,6 +105,13 @@ WHERE {
                   UNION
                   {
                     ?dtor_ a java:Resource ;
+                           java:name ?vname_ ;
+                           src:child1 ?ty_ ;
+                           java:inMethodOrConstructor ?meth_ .
+                  }
+                  UNION
+                  {
+                    ?dtor_ a java:CatchParameter ;
                            java:name ?vname_ ;
                            src:child1 ?ty_ ;
                            java:inMethodOrConstructor ?meth_ .

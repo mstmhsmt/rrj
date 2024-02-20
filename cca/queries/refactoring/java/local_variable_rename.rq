@@ -52,6 +52,13 @@ WHERE {
               java:inMethodOrConstructor ?meth ;
               chg:relabeled ?dtor_ .
       }
+      UNION
+      {
+        ?dtor a java:CatchParameter ;
+              java:name ?vname ;
+              java:inMethodOrConstructor ?meth ;
+              chg:relabeled ?dtor_ .
+      }
 
     } GROUP BY ?dtor ?dtor_ ?vname ?meth
   }
@@ -79,6 +86,12 @@ WHERE {
                java:name ?vname_ ;
                java:inMethodOrConstructor ?meth_ .
       }
+      UNION
+      {
+        ?dtor_ a java:CatchParameter ;
+               java:name ?vname_ ;
+               java:inMethodOrConstructor ?meth_ .
+      }
 
     } GROUP BY ?dtor_ ?vname_ ?meth_
   }
@@ -91,8 +104,11 @@ WHERE {
         java:name ?vname_ .
   }
 
-  ?meth java:inTypeDeclaration ?class ;
-        chg:mappedTo ?meth_ .
+  ?meth java:inTypeDeclaration ?class .
+
+  # ?meth chg:mappedTo ?meth_ .
+  # ?meth_ java:inTypeDeclaration ?class_ .
+  # ?class chg:mappedTo ?class_ .
 
   OPTIONAL {
     ?meth java:name ?mname .
