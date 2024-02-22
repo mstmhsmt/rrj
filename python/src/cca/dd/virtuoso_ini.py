@@ -36,7 +36,7 @@ MaxCheckpointRemap              = 2000
 Striping                        = 0
 
 [Flags]
-tn_max_memory                   = 2000000000
+;tn_max_memory                   = 2000000000
 
 [Parameters]
 ServerPort                      = %(port)d
@@ -61,7 +61,7 @@ VADInstallDir                   = /opt/virtuoso/vad/
 PrefixResultNames               = 0
 RdfFreeTextRulesSize            = 100
 IndexTreeMaps                   = 256
-MaxMemPoolSize                  = 200000000
+MaxMemPoolSize                  = 400000000
 TransactionAfterImageLimit      = 1600000000
 PrefixResultNames               = 0
 MacSpotlight                    = 0

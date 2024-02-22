@@ -202,6 +202,11 @@ GRAPH <%(graph_uri)s> {
         ?dtor a java:Resource ;
               src:child1 ?vty .
       }
+      UNION
+      {
+        ?dtor a java:CatchParameter ;
+              src:child1 ?vty .
+      }
       ?vty a java:Type ;
            a ?cat OPTION (INFERENCE NONE) .
       {
@@ -234,6 +239,11 @@ GRAPH <%(graph_uri)s> {
       UNION
       {
         ?dtor_ a java:Resource ;
+               src:child1 ?vty_ .
+      }
+      UNION
+      {
+        ?dtor_ a java:CatchParameter ;
                src:child1 ?vty_ .
       }
       ?vty_ a java:Type ;

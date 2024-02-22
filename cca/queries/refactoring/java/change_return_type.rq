@@ -27,10 +27,10 @@ SELECT DISTINCT ?ty ?ty_ ?tyname ?tyname_ ?meth ?meth_
 (CONCAT(?className,".",?methodName) AS ?GROUP)
 WHERE {
 
-  {
-    SELECT DISTINCT ?meth ?meth_ ?class ?class_ ?ty ?ty_
-                    ?tyname ?tyname_ ?className ?className_ ?methodName ?dims ?dims_
-    WHERE {
+  # {
+  #   SELECT DISTINCT ?meth ?meth_ ?class ?class_ ?ty ?ty_
+  #                   ?tyname ?tyname_ ?className ?className_ ?methodName ?dims ?dims_
+  #   WHERE {
       ?meth a java:MethodDeclaration ;
             java:returnTypeName ?tyname ;
             src:child2 ?ty ;
@@ -103,8 +103,8 @@ WHERE {
         ?ty_ java:dimensions ?dims_ .
       }
 
-    } GROUP BY ?meth ?meth_ ?class ?class_ ?ty ?ty_
-               ?tyname ?tyname_ ?className ?className_ ?methodName ?dims ?dims_
-  }
+  #   } GROUP BY ?meth ?meth_ ?class ?class_ ?ty ?ty_
+  #              ?tyname ?tyname_ ?className ?className_ ?methodName ?dims ?dims_
+  # }
 
 }
