@@ -36,7 +36,7 @@ MaxCheckpointRemap              = 2000
 Striping                        = 0
 
 [Flags]
-;tn_max_memory                   = 2000000000
+tn_max_memory                   = 2000000000
 
 [Parameters]
 ServerPort                      = %(port)d
@@ -71,8 +71,8 @@ HashJoinSpace                   = 4G
 VectorSize                      = 1000
 MaxVectorSize                   = 1000000
 AdjustVectorSize                = 0
-ThreadsPerQuery                 = 2
-AsyncQueueMaxThreads            = 4
+ThreadsPerQuery                 = 1
+AsyncQueueMaxThreads            = 2
 
 NumberOfBuffers = %(nbufs)d
 MaxDirtyBuffers = %(mdbufs)d

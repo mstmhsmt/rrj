@@ -25,7 +25,7 @@ PREFIX ver:  <%(ver_ns)s>
 PREFIX jref: <%(jref_ns)s>
 PREFIX java: <%(java_ns)s>
 
-SELECT DISTINCT ?mname ?msig ?cfqn ?mname_ ?msig_ ?cfqn_ ?ver ?ver_
+SELECT DISTINCT ?mname ?msig ?cfqn ?abst ?mname_ ?msig_ ?abst_ ?cfqn_ ?ver ?ver_
 WHERE {
 GRAPH <%(graph_uri)s> {
 [] a jref:RenameMethod ;
@@ -45,7 +45,6 @@ GRAPH <%(graph_uri)s> {
              java:name ?cname ;
              java:fullyQualifiedName ?cfqn ;
              ver:version ?ver .
-
     } GROUP BY ?meth ?mname ?msig ?cfqn ?ver
   }
   {
@@ -61,10 +60,15 @@ GRAPH <%(graph_uri)s> {
               java:name ?cname_ ;
               java:fullyQualifiedName ?cfqn_ ;
               ver:version ?ver_ .
-
     } GROUP BY ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_
   }
   ?ver ver:next ?ver_ .
+  OPTIONAL {
+    ?meth java:isAbstract ?abst .
+  }
+  OPTIONAL {
+    ?meth_ java:isAbstract ?abst_ .
+  }
 }
 }
 '''
@@ -76,7 +80,7 @@ PREFIX java: <%(java_ns)s>
 PREFIX src:  <%(src_ns)s>
 
 SELECT DISTINCT ?pname ?ptyname ?pname_ ?ptyname_ ?dims ?dims_
-                ?mname_ ?msig_ ?cfqn_ ?ver ?ver_
+                ?mname_ ?msig_ ?abst_ ?cfqn_ ?ver ?ver_
 WHERE {
 GRAPH <%(graph_uri)s> {
 [] a jref:RenameParameter ;
@@ -159,10 +163,12 @@ GRAPH <%(graph_uri)s> {
               java:name ?cname_ ;
               java:fullyQualifiedName ?cfqn_ ;
               ver:version ?ver_ .
-
     } GROUP BY ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_
   }
   ?ver ver:next ?ver_ .
+  OPTIONAL {
+    ?meth_ java:isAbstract ?abst_ .
+  }
 }
 }
 '''
@@ -395,7 +401,7 @@ PREFIX jref: <%(jref_ns)s>
 PREFIX java: <%(java_ns)s>
 
 SELECT DISTINCT ?rtyname ?rtyname_ ?dims ?dims_
-                ?mname_ ?msig_ ?cfqn_ ?ver ?ver_
+                ?mname_ ?msig_ ?abst_ ?cfqn_ ?ver ?ver_
 WHERE {
 GRAPH <%(graph_uri)s> {
 [] a jref:ChangeReturnType ;
@@ -473,10 +479,12 @@ GRAPH <%(graph_uri)s> {
               java:name ?cname_ ;
               java:fullyQualifiedName ?cfqn_ ;
               ver:version ?ver_ .
-
     } GROUP BY ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_
   }
   ?ver ver:next ?ver_ .
+  OPTIONAL {
+    ?meth_ java:isAbstract ?abst_ .
+  }
 }
 }
 '''
@@ -487,7 +495,7 @@ PREFIX jref: <%(jref_ns)s>
 PREFIX java: <%(java_ns)s>
 
 SELECT DISTINCT ?pname ?ptyname ?pname_ ?ptyname_ ?dims ?dims_
-                ?mname_ ?msig_ ?cfqn_ ?ver ?ver_
+                ?mname_ ?msig_ ?abst_ ?cfqn_ ?ver ?ver_
 WHERE {
 GRAPH <%(graph_uri)s> {
 ?r a jref:ChangeParameterType ;
@@ -538,6 +546,9 @@ GRAPH <%(graph_uri)s> {
     } GROUP BY ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_
   }
   ?ver ver:next ?ver_ .
+  OPTIONAL {
+    ?meth_ java:isAbstract ?abst_ .
+  }
 }
 }
 '''

@@ -147,13 +147,19 @@ def get_dims_(row):
 
 def proc_RM(row):
     cfqn = row['cfqn'].replace('$', '.')
+    abst = ''
+    # if row['abst'] == 'true':
+    #     abst = 'abstract '
     mname = setup_mname(row['mname'], cfqn)
     msig = reduce_msig(row['msig'])
     cfqn_ = row['cfqn_'].replace('$', '.')
+    abst_ = ''
+    # if row['abst_'] == 'true':
+    #     abst_ = 'abstract '
     mname_ = setup_mname(row['mname_'], cfqn_)
     msig_ = reduce_msig(row['msig_'])
     ver = row['ver']
-    key = f'RM {mname}{msig}->{mname_}{msig_} {cfqn_}'
+    key = f'RM {abst}{mname}{msig}->{abst_}{mname_}{msig_} {cfqn_}'
     cid = get_cid(ver)
     return key, cid
 
@@ -166,10 +172,13 @@ def proc_RP(row):
     dims_ = get_dims_(row)
     pty_ = '[' * dims_ + get_type_sig(row['ptyname_'])
     cfqn_ = row['cfqn_'].replace('$', '.')
+    abst_ = ''
+    # if row['abst_'] == 'true':
+    #     abst_ = 'abstract '
     mname_ = setup_mname(row['mname_'], cfqn_)
     msig_ = reduce_msig(row['msig_'])
     ver = row['ver']
-    key = f'RP {pname}:{pty}->{pname_}:{pty_} {mname_}{msig_} {cfqn_}'
+    key = f'RP {pname}:{pty}->{pname_}:{pty_} {abst_}{mname_}{msig_} {cfqn_}'
     cid = get_cid(ver)
     return key, cid
 
@@ -210,10 +219,13 @@ def proc_CRT(row):
     dims_ = get_dims_(row)
     rty_ = '[' * dims_ + get_type_sig(row['rtyname_'])
     cfqn_ = row['cfqn_'].replace('$', '.')
+    abst_ = ''
+    # if row['abst_'] == 'true':
+    #     abst_ = 'abstract '
     mname_ = setup_mname(row['mname_'], cfqn_)
     msig_ = reduce_msig(row['msig_'])
     ver = row['ver']
-    key = f'CRT {rty}->{rty_} {mname_}{msig_} {cfqn_}'
+    key = f'CRT {rty}->{rty_} {abst_}{mname_}{msig_} {cfqn_}'
     cid = get_cid(ver)
     return key, cid
 
@@ -226,10 +238,13 @@ def proc_CPT(row):
     dims_ = get_dims_(row)
     pty_ = '[' * dims_ + get_type_sig(row['ptyname_'])
     cfqn_ = row['cfqn_'].replace('$', '.')
+    abst_ = ''
+    # if row['abst_'] == 'true':
+    #     abst_ = 'abstract '
     mname_ = setup_mname(row['mname_'], cfqn_)
     msig_ = reduce_msig(row['msig_'])
     ver = row['ver']
-    key = f'CPT {pname}:{pty}->{pname_}:{pty_} {mname_}{msig_} {cfqn_}'
+    key = f'CPT {pname}:{pty}->{pname_}:{pty_} {abst_}{mname_}{msig_} {cfqn_}'
     cid = get_cid(ver)
     return key, cid
 
