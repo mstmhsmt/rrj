@@ -31,6 +31,15 @@ WHERE {
   #   SELECT DISTINCT ?meth ?meth_ ?class ?class_ ?ty ?ty_
   #                   ?tyname ?tyname_ ?className ?className_ ?methodName ?dims ?dims_
   #   WHERE {
+
+  {
+    SELECT DISTINCT ?meth ?meth_ ?class ?class_ ?ty ?ty_ ?tyname ?tyname_ ?methodName
+    WHERE {
+
+  {
+    SELECT DISTINCT ?meth ?meth_ ?class ?class_ ?ty ?ty_ ?tyname ?tyname_ ?methodName
+    WHERE {
+
       ?meth a java:MethodDeclaration ;
             java:returnTypeName ?tyname ;
             src:child2 ?ty ;
@@ -46,11 +55,8 @@ WHERE {
              src:child2 ?ty_ ;
              java:inTypeDeclaration ?class_ .
 
-      ?class a java:TypeDeclaration ;
-             java:name ?className .
-
-      ?class_ a java:TypeDeclaration ;
-              java:name ?className_ .
+    } GROUP BY ?meth ?meth_ ?class ?class_ ?ty ?ty_ ?tyname ?tyname_ ?methodName
+  }
 
       FILTER (EXISTS {
         ?ty a java:ReferenceType ;
@@ -95,6 +101,15 @@ WHERE {
            chg:mappedTo ?ty_ ;
            src:parent+ ?ty .
       })
+
+    } GROUP BY ?meth ?meth_ ?class ?class_ ?ty ?ty_ ?tyname ?tyname_ ?methodName
+  }
+
+      ?class a java:TypeDeclaration ;
+             java:name ?className .
+
+      ?class_ a java:TypeDeclaration ;
+              java:name ?className_ .
 
       OPTIONAL {
         ?ty java:dimensions ?dims .

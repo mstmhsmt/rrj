@@ -27,29 +27,44 @@ SELECT DISTINCT ?param ?param_ ?v ?v_
 (CONCAT(?className,".",?methodName) AS ?GROUP)
 WHERE {
 
-  ?param a java:Parameter ;
-         java:name ?pname ;
-         java:inMethodOrConstructor ?meth ;
-         chg:relabeled ?param_ .
+  {
+    SELECT DISTINCT ?param ?pname ?meth ?param_ ?pname_ ?meth_
+    WHERE {
 
-  ?param_ a java:Parameter ;
-          java:name ?pname_ ;
-          java:inMethodOrConstructor ?meth_ .
+      {
+        SELECT DISTINCT ?param ?pname ?meth ?param_
+        WHERE {
 
-  ?meth java:inTypeDeclaration ?class .
+          ?param a java:Parameter ;
+                 java:name ?pname ;
+                 java:inMethodOrConstructor ?meth ;
+                 chg:relabeled ?param_ .
 
-  FILTER (EXISTS {
-    ?meth chg:mappedTo ?meth_ .
-  } || EXISTS {
-    [] a java:MethodBody ;
-       src:parent ?meth ;
-       chg:mappedTo [ a java:MethodBody ;
-                      src:parent ?meth_ ] .
-  })
+        } GROUP BY ?param ?pname ?meth ?param_
+      }
+
+      ?param_ a java:Parameter ;
+              java:name ?pname_ ;
+              java:inMethodOrConstructor ?meth_ .
+
+
+      FILTER (EXISTS {
+        ?meth chg:mappedTo ?meth_ .
+      } || EXISTS {
+        [] a java:MethodBody ;
+           src:parent ?meth ;
+           chg:mappedTo [ a java:MethodBody ;
+                          src:parent ?meth_ ] .
+      })
+
+    } GROUP BY ?param ?pname ?meth ?param_ ?pname_ ?meth_
+  }
 
   OPTIONAL {
     ?meth java:name ?mname .
   }
+
+  ?meth java:inTypeDeclaration ?class .
 
   ?class a java:TypeDeclaration ;
          java:name ?cname .

@@ -28,7 +28,13 @@ WHERE {
 
   {
     SELECT DISTINCT ?vdtor ?vdtor_ ?fname ?fname_ ?class ?class_ ?cfqn ?cfqn_ ?field ?field_
+                    ?ty ?tyname ?dims ?ty_ ?tyname_ ?dims_ ?ver ?ver_
     WHERE {
+
+  {
+    SELECT DISTINCT ?vdtor ?vdtor_ ?fname ?fname_ ?class ?class_ ?cfqn ?cfqn_ ?field ?field_
+    WHERE {
+
       ?vdtor a java:VariableDeclarator ;
              src:parent ?field ;
              java:name ?fname ;
@@ -116,6 +122,10 @@ WHERE {
         ?ty_ java:dimensions ?dims_ .
       }
     } GROUP BY ?ty_ ?tyname_ ?dims_
+  }
+
+    } GROUP BY ?vdtor ?vdtor_ ?fname ?fname_ ?class ?class_ ?cfqn ?cfqn_ ?field ?field_
+               ?ty ?tyname ?dims ?ty_ ?tyname_ ?dims_ ?ver ?ver_
   }
 
   FILTER (EXISTS {

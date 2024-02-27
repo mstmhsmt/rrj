@@ -36,11 +36,11 @@ WHERE {
 
   {
     SELECT DISTINCT ?param ?param_ ?tyname ?tyname_ ?dims ?dims_ ?pname ?pname_
-    ?meth ?meth_ ?ty ?ty_
+                    ?meth ?meth_ ?ty ?ty_
     WHERE {
       {
         SELECT DISTINCT ?param ?param_ ?tyname ?tyname_ ?dims ?dims_ ?pname ?pname_
-        ?meth ?meth_ ?ty ?ty_
+                        ?meth ?meth_ ?ty ?ty_
         WHERE {
           ?param a java:Parameter ;
                  java:typeName ?tyname ;
@@ -63,7 +63,7 @@ WHERE {
           }
 
         } GROUP BY ?param ?param_ ?tyname ?tyname_ ?dims ?dims_ ?pname ?pname_
-        ?meth ?meth_ ?ty ?ty_
+                   ?meth ?meth_ ?ty ?ty_
       }
 
       FILTER (EXISTS {
@@ -111,7 +111,7 @@ WHERE {
       })
 
     } GROUP BY ?param ?param_ ?tyname ?tyname_ ?dims ?dims_ ?pname ?pname_
-    ?meth ?meth_ ?ty ?ty_
+               ?meth ?meth_ ?ty ?ty_
   }
 
   OPTIONAL {
