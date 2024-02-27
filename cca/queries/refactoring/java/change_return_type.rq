@@ -41,14 +41,11 @@ WHERE {
     WHERE {
 
       ?meth a java:MethodDeclaration ;
+            java:name ?methodName ;
             java:returnTypeName ?tyname ;
             src:child2 ?ty ;
             java:inTypeDeclaration ?class ;
             chg:mappedTo ?meth_ .
-
-      OPTIONAL {
-        ?meth java:name ?methodName .
-      }
 
       ?meth_ a java:MethodDeclaration ;
              java:returnTypeName ?tyname_ ;

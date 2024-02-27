@@ -28,11 +28,11 @@ SELECT DISTINCT ?param ?param_ ?v ?v_
 WHERE {
 
   {
-    SELECT DISTINCT ?param ?pname ?meth ?param_ ?pname_ ?meth_
+    SELECT DISTINCT ?param ?pname ?meth ?param_ ?pname_ ?meth_ ?mname ?mname_ ?class ?class_
     WHERE {
 
       {
-        SELECT DISTINCT ?param ?pname ?meth ?param_
+        SELECT DISTINCT ?param ?pname ?meth ?param_ ?pname_ ?meth_
         WHERE {
 
           ?param a java:Parameter ;
@@ -40,31 +40,32 @@ WHERE {
                  java:inMethodOrConstructor ?meth ;
                  chg:relabeled ?param_ .
 
-        } GROUP BY ?param ?pname ?meth ?param_
+          ?param_ a java:Parameter ;
+                  java:name ?pname_ ;
+                  java:inMethodOrConstructor ?meth_ .
+
+        } GROUP BY ?param ?pname ?meth ?param_ ?pname_ ?meth_
       }
 
-      ?param_ a java:Parameter ;
-              java:name ?pname_ ;
-              java:inMethodOrConstructor ?meth_ .
+      ?meth a java:MethodOrConstructor ;
+            java:name ?mname ;
+            java:inTypeDeclaration ?class .
 
+      ?meth_ a java:MethodOrConstructor ;
+             java:name ?mname_ ;
+             java:inTypeDeclaration ?class_ .
 
-      FILTER (EXISTS {
-        ?meth chg:mappedTo ?meth_ .
-      } || EXISTS {
-        [] a java:MethodBody ;
-           src:parent ?meth ;
-           chg:mappedTo [ a java:MethodBody ;
-                          src:parent ?meth_ ] .
-      })
-
-    } GROUP BY ?param ?pname ?meth ?param_ ?pname_ ?meth_
+    } GROUP BY ?param ?pname ?meth ?param_ ?pname_ ?meth_ ?mname ?mname_ ?class ?class_
   }
 
-  OPTIONAL {
-    ?meth java:name ?mname .
-  }
-
-  ?meth java:inTypeDeclaration ?class .
+  FILTER (EXISTS {
+    ?meth chg:mappedTo ?meth_ .
+  } || EXISTS {
+    [] a java:MethodBody ;
+       src:parent ?meth ;
+       chg:mappedTo [ a java:MethodBody ;
+                      src:parent ?meth_ ] .
+  })
 
   ?class a java:TypeDeclaration ;
          java:name ?cname .

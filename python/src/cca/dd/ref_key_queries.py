@@ -33,7 +33,7 @@ GRAPH <%(graph_uri)s> {
    jref:originalMethod ?meth ;
    jref:modifiedMethod ?meth_ .
   {
-    SELECT DISTINCT ?meth ?mname ?msig ?cfqn ?ver
+    SELECT DISTINCT ?meth ?mname ?msig ?cfqn ?ver ?abst
     WHERE {
       ?meth a java:MethodOrConstructor ;
             java:inTypeDeclaration ?tdecl ;
@@ -45,10 +45,15 @@ GRAPH <%(graph_uri)s> {
              java:name ?cname ;
              java:fullyQualifiedName ?cfqn ;
              ver:version ?ver .
-    } GROUP BY ?meth ?mname ?msig ?cfqn ?ver
+
+      OPTIONAL {
+        ?meth java:isAbstract ?abst .
+      }
+
+    } GROUP BY ?meth ?mname ?msig ?cfqn ?ver ?abst
   }
   {
-    SELECT DISTINCT ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_
+    SELECT DISTINCT ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_ ?abst_
     WHERE {
       ?meth_ a java:MethodOrConstructor ;
              java:inTypeDeclaration ?tdecl_ ;
@@ -60,15 +65,14 @@ GRAPH <%(graph_uri)s> {
               java:name ?cname_ ;
               java:fullyQualifiedName ?cfqn_ ;
               ver:version ?ver_ .
-    } GROUP BY ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_
+
+      OPTIONAL {
+        ?meth_ java:isAbstract ?abst_ .
+      }
+
+    } GROUP BY ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_ ?abst_
   }
   ?ver ver:next ?ver_ .
-  OPTIONAL {
-    ?meth java:isAbstract ?abst .
-  }
-  OPTIONAL {
-    ?meth_ java:isAbstract ?abst_ .
-  }
 }
 }
 '''
@@ -151,7 +155,7 @@ GRAPH <%(graph_uri)s> {
     } GROUP BY ?meth ?mname ?msig ?cfqn ?ver
   }
   {
-    SELECT DISTINCT ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_
+    SELECT DISTINCT ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_ ?abst_
     WHERE {
       ?meth_ a java:MethodOrConstructor ;
              java:inTypeDeclaration ?tdecl_ ;
@@ -163,12 +167,14 @@ GRAPH <%(graph_uri)s> {
               java:name ?cname_ ;
               java:fullyQualifiedName ?cfqn_ ;
               ver:version ?ver_ .
-    } GROUP BY ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_
+
+      OPTIONAL {
+        ?meth_ java:isAbstract ?abst_ .
+      }
+
+    } GROUP BY ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_ ?abst_
   }
   ?ver ver:next ?ver_ .
-  OPTIONAL {
-    ?meth_ java:isAbstract ?abst_ .
-  }
 }
 }
 '''
@@ -467,7 +473,7 @@ GRAPH <%(graph_uri)s> {
     } GROUP BY ?meth ?mname ?msig ?cfqn ?ver
   }
   {
-    SELECT DISTINCT ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_
+    SELECT DISTINCT ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_ ?abst_
     WHERE {
       ?meth_ a java:MethodOrConstructor ;
              java:inTypeDeclaration ?tdecl_ ;
@@ -479,12 +485,14 @@ GRAPH <%(graph_uri)s> {
               java:name ?cname_ ;
               java:fullyQualifiedName ?cfqn_ ;
               ver:version ?ver_ .
-    } GROUP BY ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_
+
+      OPTIONAL {
+        ?meth_ java:isAbstract ?abst_ .
+      }
+
+    } GROUP BY ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_ ?abst_
   }
   ?ver ver:next ?ver_ .
-  OPTIONAL {
-    ?meth_ java:isAbstract ?abst_ .
-  }
 }
 }
 '''
@@ -530,7 +538,7 @@ GRAPH <%(graph_uri)s> {
     } GROUP BY ?meth ?mname ?msig ?cfqn ?ver
   }
   {
-    SELECT DISTINCT ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_
+    SELECT DISTINCT ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_ ?abst_
     WHERE {
       ?meth_ a java:MethodOrConstructor ;
              java:inTypeDeclaration ?tdecl_ ;
@@ -543,12 +551,13 @@ GRAPH <%(graph_uri)s> {
               java:fullyQualifiedName ?cfqn_ ;
               ver:version ?ver_ .
 
-    } GROUP BY ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_
+      OPTIONAL {
+        ?meth_ java:isAbstract ?abst_ .
+      }
+
+    } GROUP BY ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_ ?abst_
   }
   ?ver ver:next ?ver_ .
-  OPTIONAL {
-    ?meth_ java:isAbstract ?abst_ .
-  }
 }
 }
 '''

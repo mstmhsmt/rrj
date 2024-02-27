@@ -140,11 +140,8 @@ WHERE {
   # })
 
   ?meth java:inTypeDeclaration ?class ;
+        java:name ?mname ;
         chg:mappedTo ?meth_ .
-
-  OPTIONAL {
-    ?meth java:name ?mname .
-  }
 
   ?meth_ java:inTypeDeclaration ?class_ .
 

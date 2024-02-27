@@ -103,6 +103,17 @@ WHERE {
     } GROUP BY ?dtor ?dtor_ ?vname ?meth ?vname_ ?meth_
   }
 
+  ?meth a java:MethodOrConstructor ;
+        java:name ?mname ;
+        java:inTypeDeclaration ?class .
+
+  # ?meth chg:mappedTo ?meth_ .
+  # ?meth_ java:inTypeDeclaration ?class_ .
+  # ?class chg:mappedTo ?class_ .
+
+  ?class a java:TypeDeclaration ;
+         java:name ?cname .
+
   OPTIONAL {
     ?v java:declaredBy ?dtor ;
        java:name ?vname ;
@@ -110,19 +121,6 @@ WHERE {
     ?v_ java:declaredBy ?dtor_ ;
         java:name ?vname_ .
   }
-
-  ?meth java:inTypeDeclaration ?class .
-
-  # ?meth chg:mappedTo ?meth_ .
-  # ?meth_ java:inTypeDeclaration ?class_ .
-  # ?class chg:mappedTo ?class_ .
-
-  OPTIONAL {
-    ?meth java:name ?mname .
-  }
-
-  ?class a java:TypeDeclaration ;
-         java:name ?cname .
 
 }
 

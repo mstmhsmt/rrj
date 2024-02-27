@@ -178,12 +178,11 @@ WHERE {
         } GROUP BY ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_ ?v ?v_
       }
 
-      OPTIONAL {
-        ?meth java:name ?mname .
-      }
-      OPTIONAL {
-        ?meth_ java:name ?mname_ .
-      }
+      ?meth a java:MethodOrConstructor ;
+            java:name ?mname .
+
+      ?meth_ a java:MethodOrConstructor ;
+             java:name ?mname_ .
 
     } GROUP BY ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_ ?v ?v_ ?mname ?mname_
   }
