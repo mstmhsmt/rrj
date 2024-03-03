@@ -132,10 +132,8 @@ WHERE {
     ?ty a java:ReferenceType ;
         chg:mappedTo ?ty_ .
     ?ty_ a java:ReferenceType .
-    ?x 
-       src:parent+ ?ty .
-    ?x_ 
-        src:parent+ ?ty_ .
+    ?x src:parent+ ?ty .
+    ?x_ src:parent+ ?ty_ .
     FILTER (EXISTS {
       ?x chg:changedTo ?x_ .
     } || EXISTS {
@@ -144,14 +142,12 @@ WHERE {
   } || EXISTS {
     ?ty a java:ReferenceType ;
         chg:mappedTo ?ty_ .
-    ?x 
-       src:parent+ ?ty ;
+    ?x src:parent+ ?ty ;
        chg:removal [] .
   } || EXISTS {
     ?ty_ a java:ReferenceType ;
          ^chg:mappedTo ?ty .
-    ?x_ 
-        src:parent+ ?ty_ ;
+    ?x_ src:parent+ ?ty_ ;
         chg:addition [] .
   } || EXISTS {
     ?ty chg:changedTo ?ty_ .
@@ -162,13 +158,11 @@ WHERE {
     ?ty_ a java:ReferenceType ;
          chg:addition [] .
     ?ty chg:mappedTo ?x_ .
-    ?x_ 
-        src:parent+ ?ty_ .
+    ?x_ src:parent+ ?ty_ .
   } || EXISTS {
     ?ty a java:ReferenceType ;
         chg:removal [] .
-    ?x 
-       chg:mappedTo ?ty_ ;
+    ?x chg:mappedTo ?ty_ ;
        src:parent+ ?ty .
   })
 

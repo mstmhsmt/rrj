@@ -32,7 +32,7 @@ SELECT DISTINCT ?ty ?ty_ ?v ?v_
 WHERE {
 
   {
-    SELECT DISTINCT ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_ ?v ?v_ ?mname ?mname_
+    SELECT DISTINCT ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_ ?v ?v_ ?mname ?mname_ ?class
     WHERE {
       {
         SELECT DISTINCT ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_ ?v ?v_
@@ -85,36 +85,43 @@ WHERE {
                   ?dtor chg:mappedTo ?dtor_ .
 
                   {
-                    ?for_ a java:EnhancedForStatement ;
-                          src:child0 ?dtor_ .
+                    SELECT DISTINCT ?dtor_ ?vname_ ?meth_ ?ty_
+                    WHERE {
 
-                    ?dtor_ a java:ForHeader ;
-                           src:child1 ?ty_ ;
-                           java:name ?vname_ ;
-                           java:inMethodOrConstructor ?meth_ .
-                  }
-                  UNION
-                  {
-                    ?dtor_ a java:VariableDeclarator ;
-                           java:name ?vname_ ;
-                           java:inVariableDeclaration ?decl_ ;
-                           java:inMethodOrConstructor ?meth_ .
+                      {
+                        ?for_ a java:EnhancedForStatement ;
+                              src:child0 ?dtor_ .
 
-                    ?decl_ src:child1 ?ty_ .
-                  }
-                  UNION
-                  {
-                    ?dtor_ a java:Resource ;
-                           java:name ?vname_ ;
-                           src:child1 ?ty_ ;
-                           java:inMethodOrConstructor ?meth_ .
-                  }
-                  UNION
-                  {
-                    ?dtor_ a java:CatchParameter ;
-                           java:name ?vname_ ;
-                           src:child1 ?ty_ ;
-                           java:inMethodOrConstructor ?meth_ .
+                        ?dtor_ a java:ForHeader ;
+                               src:child1 ?ty_ ;
+                               java:name ?vname_ ;
+                               java:inMethodOrConstructor ?meth_ .
+                      }
+                      UNION
+                      {
+                        ?dtor_ a java:VariableDeclarator ;
+                               java:name ?vname_ ;
+                               java:inVariableDeclaration ?decl_ ;
+                               java:inMethodOrConstructor ?meth_ .
+
+                        ?decl_ src:child1 ?ty_ .
+                      }
+                      UNION
+                      {
+                        ?dtor_ a java:Resource ;
+                               java:name ?vname_ ;
+                               src:child1 ?ty_ ;
+                               java:inMethodOrConstructor ?meth_ .
+                      }
+                      UNION
+                      {
+                        ?dtor_ a java:CatchParameter ;
+                               java:name ?vname_ ;
+                               src:child1 ?ty_ ;
+                               java:inMethodOrConstructor ?meth_ .
+                      }
+
+                    } GROUP BY ?dtor_ ?vname_ ?meth_ ?ty_
                   }
 
                 } GROUP BY ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_
@@ -179,12 +186,13 @@ WHERE {
       }
 
       ?meth a java:MethodOrConstructor ;
-            java:name ?mname .
+            java:name ?mname ;
+            java:inTypeDeclaration ?class .
 
       ?meth_ a java:MethodOrConstructor ;
              java:name ?mname_ .
 
-    } GROUP BY ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_ ?v ?v_ ?mname ?mname_
+    } GROUP BY ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_ ?v ?v_ ?mname ?mname_ ?class
   }
 
   {
@@ -228,8 +236,6 @@ WHERE {
       }
     } GROUP BY ?ty_ ?tyname_ ?dims_
   }
-
-  ?meth java:inTypeDeclaration ?class .
 
   ?class a java:TypeDeclaration ;
          java:name ?cname .
