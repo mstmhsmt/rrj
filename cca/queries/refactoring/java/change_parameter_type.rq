@@ -36,7 +36,7 @@ WHERE {
 
   {
     SELECT DISTINCT ?param ?param_ ?tyname ?tyname_ ?dims ?dims_ ?pname ?pname_
-                    ?meth ?meth_ ?ty ?ty_ ?v ?v_ ?mname ?mname_ ?class
+                    ?meth ?meth_ ?ty ?ty_ ?v ?v_ ?mname ?mname_ ?class ?class_
     WHERE {
       {
         SELECT DISTINCT ?param ?param_ ?tyname ?tyname_ ?dims ?dims_ ?pname ?pname_ ?ty ?ty_ ?v ?v_
@@ -158,10 +158,13 @@ WHERE {
              java:name ?mname_ .
 
     } GROUP BY ?param ?param_ ?tyname ?tyname_ ?dims ?dims_ ?pname ?pname_
-               ?meth ?meth_ ?ty ?ty_ ?v ?v_ ?mname ?mname_ ?class
+               ?meth ?meth_ ?ty ?ty_ ?v ?v_ ?mname ?mname_ ?class ?class_
   }
 
   ?class a java:TypeDeclaration ;
          java:name ?cname .
+
+  ?class_ a java:TypeDeclaration ;
+          java:name ?cname_ .
 
 }

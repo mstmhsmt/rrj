@@ -32,7 +32,8 @@ SELECT DISTINCT ?ty ?ty_ ?v ?v_
 WHERE {
 
   {
-    SELECT DISTINCT ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_ ?v ?v_ ?mname ?mname_ ?class
+    SELECT DISTINCT ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_ ?v ?v_ ?mname ?mname_
+                    ?class ?class_
     WHERE {
       {
         SELECT DISTINCT ?dtor ?dtor_ ?vname ?ty ?ty_ ?vname_ ?v ?v_
@@ -179,10 +180,15 @@ WHERE {
             java:inTypeDeclaration ?class .
 
       ?meth_ a java:MethodOrConstructor ;
-             java:name ?mname_ .
+             java:name ?mname_ ;
+             java:inTypeDeclaration ?class_ .
 
-    } GROUP BY ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_ ?v ?v_ ?mname ?mname_ ?class
+    } GROUP BY ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_ ?v ?v_ ?mname ?mname_
+               ?class ?class_
   }
+
+  ?class a java:TypeDeclaration ;
+         java:name ?cname .
 
   {
     SELECT DISTINCT ?ty ?tyname ?dims
@@ -225,8 +231,5 @@ WHERE {
       }
     } GROUP BY ?ty_ ?tyname_ ?dims_
   }
-
-  ?class a java:TypeDeclaration ;
-         java:name ?cname .
 
 }
