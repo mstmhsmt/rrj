@@ -33,7 +33,10 @@ WHERE {
 
   {
     SELECT DISTINCT ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_ ?v ?v_ ?mname ?mname_
-                    ?class ?class_
+                    ?tyname ?tyname_ ?dims ?dims_
+    WHERE {
+  {
+    SELECT DISTINCT ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_ ?v ?v_ ?mname ?mname_
     WHERE {
       {
         SELECT DISTINCT ?dtor ?dtor_ ?vname ?ty ?ty_ ?vname_ ?v ?v_
@@ -162,33 +165,32 @@ WHERE {
           }
 
           OPTIONAL {
-            ?v java:declaredBy ?dtor ;
+            ?v a java:Entity ;
+               java:declaredBy ?dtor ;
                java:name ?vname ;
                chg:mappedTo ?v_ .
-            ?v_ java:declaredBy ?dtor_ ;
+            ?v_ a java:Entity ;
+                java:declaredBy ?dtor_ ;
                 java:name ?vname_ .
           }
 
         } GROUP BY ?dtor ?dtor_ ?vname ?ty ?ty_ ?vname_ ?v ?v_
       }
 
-      ?dtor java:inMethodOrConstructor ?meth .
-      ?dtor_ java:inMethodOrConstructor ?meth_ .
+      ?dtor a java:Entity ;
+            java:inMethodOrConstructor ?meth .
+
+      ?dtor_ a java:Entity ;
+             java:inMethodOrConstructor ?meth_ .
 
       ?meth a java:MethodOrConstructor ;
-            java:name ?mname ;
-            java:inTypeDeclaration ?class .
+            java:name ?mname .
 
       ?meth_ a java:MethodOrConstructor ;
-             java:name ?mname_ ;
-             java:inTypeDeclaration ?class_ .
+             java:name ?mname_ .
 
     } GROUP BY ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_ ?v ?v_ ?mname ?mname_
-               ?class ?class_
   }
-
-  ?class a java:TypeDeclaration ;
-         java:name ?cname .
 
   {
     SELECT DISTINCT ?ty ?tyname ?dims
@@ -231,5 +233,15 @@ WHERE {
       }
     } GROUP BY ?ty_ ?tyname_ ?dims_
   }
+
+    } GROUP BY ?dtor ?dtor_ ?vname ?meth ?ty ?ty_ ?vname_ ?meth_ ?v ?v_ ?mname ?mname_
+               ?tyname ?tyname_ ?dims ?dims_
+  }
+
+  ?meth a java:MethodOrConstructor ;
+        java:inTypeDeclaration ?class .
+
+  ?class a java:TypeDeclaration ;
+         java:name ?cname .
 
 }
