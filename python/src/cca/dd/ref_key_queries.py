@@ -42,7 +42,6 @@ GRAPH <%(graph_uri)s> {
             java:signature ?msig .
 
       ?tdecl a java:TypeDeclaration ;
-             java:name ?cname ;
              java:fullyQualifiedName ?cfqn ;
              ver:version ?ver .
 
@@ -62,7 +61,6 @@ GRAPH <%(graph_uri)s> {
              java:signature ?msig_ .
 
       ?tdecl_ a java:TypeDeclaration ;
-              java:name ?cname_ ;
               java:fullyQualifiedName ?cfqn_ ;
               ver:version ?ver_ .
 
@@ -84,7 +82,7 @@ PREFIX java: <%(java_ns)s>
 PREFIX src:  <%(src_ns)s>
 
 SELECT DISTINCT ?pname ?ptyname ?pname_ ?ptyname_ ?dims ?dims_
-                ?mname_ ?msig_ ?abst_ ?cfqn_ ?ver ?ver_
+                ?mname ?msig ?cfqn ?mname_ ?msig_ ?abst_ ?cfqn_ ?ver ?ver_
 WHERE {
 GRAPH <%(graph_uri)s> {
 [] a jref:RenameParameter ;
@@ -148,7 +146,6 @@ GRAPH <%(graph_uri)s> {
             java:signature ?msig .
 
       ?tdecl a java:TypeDeclaration ;
-             java:name ?cname ;
              java:fullyQualifiedName ?cfqn ;
              ver:version ?ver .
 
@@ -164,7 +161,6 @@ GRAPH <%(graph_uri)s> {
              java:signature ?msig_ .
 
       ?tdecl_ a java:TypeDeclaration ;
-              java:name ?cname_ ;
               java:fullyQualifiedName ?cfqn_ ;
               ver:version ?ver_ .
 
@@ -186,7 +182,7 @@ PREFIX java: <%(java_ns)s>
 PREFIX src:  <%(src_ns)s>
 
 SELECT DISTINCT ?vname ?vtyname ?vname_ ?vtyname_ ?dims ?dims_
-                ?mname_ ?msig_ ?cfqn_ ?ver ?ver_
+                ?mname ?msig ?cfqn ?mname_ ?msig_ ?cfqn_ ?ver ?ver_
 WHERE {
 GRAPH <%(graph_uri)s> {
 [] a jref:LocalVariableRename ;
@@ -285,7 +281,6 @@ GRAPH <%(graph_uri)s> {
             java:signature ?msig .
 
       ?tdecl a java:TypeDeclaration ;
-             java:name ?cname ;
              java:fullyQualifiedName ?cfqn ;
              ver:version ?ver .
 
@@ -301,7 +296,6 @@ GRAPH <%(graph_uri)s> {
              java:signature ?msig_ .
 
       ?tdecl_ a java:TypeDeclaration ;
-              java:name ?cname_ ;
               java:fullyQualifiedName ?cfqn_ ;
               ver:version ?ver_ .
 
@@ -319,7 +313,7 @@ PREFIX java: <%(java_ns)s>
 PREFIX src:  <%(src_ns)s>
 
 SELECT DISTINCT ?vname ?vtyname ?vname_ ?vtyname_ ?dims ?dims_
-                ?cfqn_ ?ver ?ver_
+                ?cfqn ?cfqn_ ?ver ?ver_
 WHERE {
 GRAPH <%(graph_uri)s> {
 [] a jref:RenameField ;
@@ -380,7 +374,6 @@ GRAPH <%(graph_uri)s> {
     SELECT DISTINCT ?tdecl ?cfqn ?ver
     WHERE {
       ?tdecl a java:TypeDeclaration ;
-             java:name ?cname ;
              java:fullyQualifiedName ?cfqn ;
              ver:version ?ver .
 
@@ -390,7 +383,6 @@ GRAPH <%(graph_uri)s> {
     SELECT DISTINCT ?tdecl_ ?cfqn_ ?ver_
     WHERE {
       ?tdecl_ a java:TypeDeclaration ;
-              java:name ?cname_ ;
               java:fullyQualifiedName ?cfqn_ ;
               ver:version ?ver_ .
 
@@ -407,7 +399,7 @@ PREFIX jref: <%(jref_ns)s>
 PREFIX java: <%(java_ns)s>
 
 SELECT DISTINCT ?rtyname ?rtyname_ ?dims ?dims_
-                ?mname_ ?msig_ ?abst_ ?cfqn_ ?ver ?ver_
+                ?mname ?msig ?cfqn ?mname_ ?msig_ ?abst_ ?cfqn_ ?ver ?ver_
 WHERE {
 GRAPH <%(graph_uri)s> {
 [] a jref:ChangeReturnType ;
@@ -466,7 +458,6 @@ GRAPH <%(graph_uri)s> {
             java:signature ?msig .
 
       ?tdecl a java:TypeDeclaration ;
-             java:name ?cname ;
              java:fullyQualifiedName ?cfqn ;
              ver:version ?ver .
 
@@ -482,7 +473,6 @@ GRAPH <%(graph_uri)s> {
              java:signature ?msig_ .
 
       ?tdecl_ a java:TypeDeclaration ;
-              java:name ?cname_ ;
               java:fullyQualifiedName ?cfqn_ ;
               ver:version ?ver_ .
 
@@ -503,7 +493,7 @@ PREFIX jref: <%(jref_ns)s>
 PREFIX java: <%(java_ns)s>
 
 SELECT DISTINCT ?pname ?ptyname ?pname_ ?ptyname_ ?dims ?dims_
-                ?mname_ ?msig_ ?abst_ ?cfqn_ ?ver ?ver_
+                ?mname ?msig ?cfqn ?mname_ ?msig_ ?abst_ ?cfqn_ ?ver ?ver_
 WHERE {
 GRAPH <%(graph_uri)s> {
 ?r a jref:ChangeParameterType ;
@@ -531,7 +521,6 @@ GRAPH <%(graph_uri)s> {
             java:signature ?msig .
 
       ?tdecl a java:TypeDeclaration ;
-             java:name ?cname ;
              java:fullyQualifiedName ?cfqn ;
              ver:version ?ver .
 
@@ -547,7 +536,6 @@ GRAPH <%(graph_uri)s> {
              java:signature ?msig_ .
 
       ?tdecl_ a java:TypeDeclaration ;
-              java:name ?cname_ ;
               java:fullyQualifiedName ?cfqn_ ;
               ver:version ?ver_ .
 
@@ -568,7 +556,7 @@ PREFIX jref: <%(jref_ns)s>
 PREFIX java: <%(java_ns)s>
 
 SELECT DISTINCT ?vname ?vtyname ?vname_ ?vtyname_ ?dims ?dims_
-                ?mname_ ?msig_ ?cfqn_ ?ver ?ver_
+                ?mname ?msig ?cfqn ?mname_ ?msig_ ?cfqn_ ?ver ?ver_
 WHERE {
 GRAPH <%(graph_uri)s> {
 ?r a jref:ChangeVariableType ;
@@ -579,6 +567,7 @@ GRAPH <%(graph_uri)s> {
    jref:modifiedVariableName ?vname_ ;
    jref:originalMethod ?meth ;
    jref:modifiedMethod ?meth_ .
+
   OPTIONAL {
     ?r jref:originalTypeDims ?dims .
   }
@@ -595,7 +584,6 @@ GRAPH <%(graph_uri)s> {
             java:signature ?msig .
 
       ?tdecl a java:TypeDeclaration ;
-             java:name ?cname ;
              java:fullyQualifiedName ?cfqn ;
              ver:version ?ver .
 
@@ -611,7 +599,6 @@ GRAPH <%(graph_uri)s> {
              java:signature ?msig_ .
 
       ?tdecl_ a java:TypeDeclaration ;
-              java:name ?cname_ ;
               java:fullyQualifiedName ?cfqn_ ;
               ver:version ?ver_ .
 
@@ -628,7 +615,7 @@ PREFIX jref: <%(jref_ns)s>
 PREFIX java: <%(java_ns)s>
 
 SELECT DISTINCT ?vname ?vtyname ?vname_ ?vtyname_ ?dims ?dims_
-                ?cfqn_ ?ver ?ver_
+                ?cfqn ?cfqn_ ?ver ?ver_
 WHERE {
 GRAPH <%(graph_uri)s> {
 ?r a jref:ChangeFieldType ;
@@ -650,7 +637,6 @@ GRAPH <%(graph_uri)s> {
     SELECT DISTINCT ?tdecl ?cfqn ?ver
     WHERE {
       ?tdecl a java:TypeDeclaration ;
-             java:name ?cname ;
              java:fullyQualifiedName ?cfqn ;
              ver:version ?ver .
 
@@ -660,7 +646,6 @@ GRAPH <%(graph_uri)s> {
     SELECT DISTINCT ?tdecl_ ?cfqn_ ?ver_
     WHERE {
       ?tdecl_ a java:TypeDeclaration ;
-              java:name ?cname_ ;
               java:fullyQualifiedName ?cfqn_ ;
               ver:version ?ver_ .
 

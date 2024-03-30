@@ -316,6 +316,7 @@ def dump(proj_id, out_file,
 
         for _, row in driver.query(query):
             key, cid = proc(row)
+            logger.debug(f'key="{key}" cid={cid}')
             try:
                 rtbl = res[cid]
             except KeyError:
