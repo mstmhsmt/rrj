@@ -28,6 +28,9 @@ from cca.ccautil.ns import FB_NS, NS_TBL
 from cca.ccautil import sparql
 from cca.ccautil.sparql import get_localname
 from .common import VIRTUOSO_PW, VIRTUOSO_PORT, abbrev, SIG_TBL
+from .common import RENAME_METHOD, RENAME_PARAMETER, RENAME_VARIABLE, RENAME_ATTRIBUTE
+from .common import CHANGE_RETURN_TYPE
+from .common import CHANGE_PARAMETER_TYPE, CHANGE_VARIABLE_TYPE, CHANGE_ATTRIBUTE_TYPE
 from .common import get_type_sig as _get_type_sig
 from .ref_key_queries import QUERY_TBL
 
@@ -145,6 +148,38 @@ def get_dims_(row):
     return x
 
 
+class Desc(object):
+    def __init__(self, offset, length=0, name=None, loc=None):
+        self.offset = offset if isinstance(offset, int) else int(offset)
+        self.length = length if isinstance(length, int) else int(length)
+        self.name = name
+        self.loc = loc
+
+    def to_dict(self):
+        d = {'offset': self.offset}
+        if self.length > 0:
+            d['length'] = self.length
+        if self.name is not None:
+            d['name'] = self.name
+        if self.loc is not None:
+            d['loc'] = self.loc
+        return d
+
+
+class Ref(object):
+    def __init__(self, key, desc=None, desc_=None):
+        self.key = key
+        self.desc = desc
+        self.desc_ = desc_
+
+    def to_dict(self):
+        d = {'key': self.key}
+        if self.desc is not None and self.desc_ is not None:
+            d['desc'] = self.desc.to_dict()
+            d['desc_'] = self.desc_.to_dict()
+        return d
+
+
 def proc_RM(row):
     cfqn = row['cfqn'].replace('$', '.')
     abst = ''
@@ -161,7 +196,7 @@ def proc_RM(row):
     ver = row['ver']
     key = f'RM {abst}{mname}{msig}->{abst_}{mname_}{msig_} {cfqn_}'
     cid = get_cid(ver)
-    return key, cid
+    return cid, Ref(key)
 
 
 def proc_RP(row):
@@ -180,7 +215,7 @@ def proc_RP(row):
     ver = row['ver']
     key = f'RP {pname}:{pty}->{pname_}:{pty_} {abst_}{mname_}{msig_} {cfqn_}'
     cid = get_cid(ver)
-    return key, cid
+    return cid, Ref(key)
 
 
 def proc_RV(row):
@@ -196,7 +231,20 @@ def proc_RV(row):
     ver = row['ver']
     key = f'RV {vname}:{vty}->{vname_}:{vty_} {mname_}{msig_} {cfqn_}'
     cid = get_cid(ver)
-    return key, cid
+
+    desc = None
+    desc_ = None
+    offset = row.get('offset', None)
+    offset_ = row.get('offset_', None)
+    length = row.get('length', None)
+    length_ = row.get('length_', None)
+    loc = row.get('loc', None)
+    loc_ = row.get('loc_', None)
+    if all([x is not None for x in [offset, length, loc, offset_, length_, loc_]]):
+        desc = Desc(offset, length, vname_, loc)
+        desc_ = Desc(offset_, length_, vname, loc_)
+
+    return cid, Ref(key, desc, desc_)
 
 
 def proc_RA(row):
@@ -210,7 +258,7 @@ def proc_RA(row):
     ver = row['ver']
     key = f'RA {vname}:{vty}->{vname_}:{vty_} {cfqn_}'
     cid = get_cid(ver)
-    return key, cid
+    return cid, Ref(key)
 
 
 def proc_CRT(row):
@@ -227,7 +275,7 @@ def proc_CRT(row):
     ver = row['ver']
     key = f'CRT {rty}->{rty_} {abst_}{mname_}{msig_} {cfqn_}'
     cid = get_cid(ver)
-    return key, cid
+    return cid, Ref(key)
 
 
 def proc_CPT(row):
@@ -246,7 +294,7 @@ def proc_CPT(row):
     ver = row['ver']
     key = f'CPT {pname}:{pty}->{pname_}:{pty_} {abst_}{mname_}{msig_} {cfqn_}'
     cid = get_cid(ver)
-    return key, cid
+    return cid, Ref(key)
 
 
 def proc_CVT(row):
@@ -262,7 +310,7 @@ def proc_CVT(row):
     ver = row['ver']
     key = f'CVT {vname}:{vty}->{vname_}:{vty_} {mname_}{msig_} {cfqn_}'
     cid = get_cid(ver)
-    return key, cid
+    return cid, Ref(key)
 
 
 def proc_CAT(row):
@@ -276,18 +324,18 @@ def proc_CAT(row):
     ver = row['ver']
     key = f'CAT {vname}:{vty}->{vname_}:{vty_} {cfqn_}'
     cid = get_cid(ver)
-    return key, cid
+    return cid, Ref(key)
 
 
 PROC_TBL = {
-    'Rename Method': proc_RM,
-    'Rename Parameter': proc_RP,
-    'Rename Variable': proc_RV,
-    'Rename Attribute': proc_RA,
-    'Change Return Type': proc_CRT,
-    'Change Parameter Type': proc_CPT,
-    'Change Variable Type': proc_CVT,
-    'Change Attribute Type': proc_CAT,
+    RENAME_METHOD: proc_RM,
+    RENAME_PARAMETER: proc_RP,
+    RENAME_VARIABLE: proc_RV,
+    RENAME_ATTRIBUTE: proc_RA,
+    CHANGE_RETURN_TYPE: proc_CRT,
+    CHANGE_PARAMETER_TYPE: proc_CPT,
+    CHANGE_VARIABLE_TYPE: proc_CVT,
+    CHANGE_ATTRIBUTE_TYPE: proc_CAT,
 }
 
 
@@ -301,7 +349,7 @@ def dump(proj_id, out_file,
     qtbl = NS_TBL.copy()
     qtbl['graph_uri'] = graph_uri
 
-    res = {}  # cid -> refty -> key list
+    tbl = {}  # cid -> refty -> key list
 
     for ref, _query in QUERY_TBL.items():
         logger.info(f'processing "{ref}"')
@@ -315,21 +363,23 @@ def dump(proj_id, out_file,
         # print(query)
 
         for _, row in driver.query(query):
-            key, cid = proc(row)
+            cid, r = proc(row)
+            key = r.key
             logger.debug(f'key="{key}" cid={cid}')
             try:
-                rtbl = res[cid]
+                rtbl = tbl[cid]
             except KeyError:
                 rtbl = {}
-                res[cid] = rtbl
+                tbl[cid] = rtbl
             try:
-                keyl = rtbl[refty]
+                rl = rtbl[refty]
             except KeyError:
-                keyl = []
-                rtbl[refty] = keyl
-            if key not in keyl:
-                keyl.append(key)
+                rl = []
+                rtbl[refty] = rl
+            rd = r.to_dict()
+            if rd not in rl:
+                rl.append(rd)
 
     logger.info(f'dumping into "{out_file}"...')
     with open(out_file, 'w') as f:
-        json.dump(res, f)
+        json.dump(tbl, f)

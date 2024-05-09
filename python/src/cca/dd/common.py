@@ -27,6 +27,15 @@ from .conf import ONT_DIR, WORK_DIR, REFACT_DIR
 from .conf import VIRTUOSO_PW, VIRTUOSO_PORT
 
 
+RENAME_METHOD = 'Rename Method'
+RENAME_PARAMETER = 'Rename Parameter'
+RENAME_VARIABLE = 'Rename Variable'
+RENAME_ATTRIBUTE = 'Rename Attribute'
+CHANGE_RETURN_TYPE = 'Change Return Type'
+CHANGE_PARAMETER_TYPE = 'Change Parameter Type'
+CHANGE_VARIABLE_TYPE = 'Change Variable Type'
+CHANGE_ATTRIBUTE_TYPE = 'Change Attribute Type'
+
 SIG_TBL = {
     'boolean': 'Z',
     'byte': 'B',

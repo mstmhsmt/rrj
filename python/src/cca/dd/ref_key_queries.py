@@ -20,6 +20,10 @@
 
 __author__ = 'Masatomo Hashimoto <m.hashimoto@stair.center>'
 
+from .common import RENAME_METHOD, RENAME_PARAMETER, RENAME_VARIABLE, RENAME_ATTRIBUTE
+from .common import CHANGE_RETURN_TYPE
+from .common import CHANGE_PARAMETER_TYPE, CHANGE_VARIABLE_TYPE, CHANGE_ATTRIBUTE_TYPE
+
 RM_QUERY = '''DEFINE input:inference "ont.cpi"
 PREFIX ver:  <%(ver_ns)s>
 PREFIX jref: <%(jref_ns)s>
@@ -183,6 +187,7 @@ PREFIX src:  <%(src_ns)s>
 
 SELECT DISTINCT ?vname ?vtyname ?vname_ ?vtyname_ ?dims ?dims_
                 ?mname ?msig ?cfqn ?mname_ ?msig_ ?cfqn_ ?ver ?ver_
+                ?offset ?length ?offset_ ?length_ ?loc ?loc_
 WHERE {
 GRAPH <%(graph_uri)s> {
 [] a jref:LocalVariableRename ;
@@ -205,11 +210,11 @@ GRAPH <%(graph_uri)s> {
         ?dtor src:parent ?decl .
         ?decl src:child1 ?vty .
       }
-      UNION
-      {
-        ?dtor a java:Resource ;
-              src:child1 ?vty .
-      }
+      # UNION
+      # {
+      #   ?dtor a java:Resource ;
+      #         src:child1 ?vty .
+      # }
       UNION
       {
         ?dtor a java:CatchParameter ;
@@ -244,11 +249,11 @@ GRAPH <%(graph_uri)s> {
         ?dtor_ src:parent ?decl_ .
         ?decl_ src:child1 ?vty_ .
       }
-      UNION
-      {
-        ?dtor_ a java:Resource ;
-               src:child1 ?vty_ .
-      }
+      # UNION
+      # {
+      #   ?dtor_ a java:Resource ;
+      #          src:child1 ?vty_ .
+      # }
       UNION
       {
         ?dtor_ a java:CatchParameter ;
@@ -302,6 +307,14 @@ GRAPH <%(graph_uri)s> {
     } GROUP BY ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_
   }
   ?ver ver:next ?ver_ .
+  OPTIONAL {
+    ?dtor java:identOffset ?offset ;
+          java:identLength ?length .
+    ?dtor_ java:identOffset ?offset_ ;
+           java:identLength ?length_ .
+  }
+  ?meth java:inTypeDeclaration/src:inFile/src:location ?loc .
+  ?meth_ java:inTypeDeclaration/src:inFile/src:location ?loc_ .
 }
 }
 '''
@@ -657,12 +670,12 @@ GRAPH <%(graph_uri)s> {
 '''
 
 QUERY_TBL = {
-    'Rename Method': RM_QUERY,
-    'Rename Parameter': RP_QUERY,
-    'Rename Variable': RV_QUERY,
-    'Rename Attribute': RA_QUERY,
-    'Change Return Type': CRT_QUERY,
-    'Change Parameter Type': CPT_QUERY,
-    'Change Variable Type': CVT_QUERY,
-    'Change Attribute Type': CAT_QUERY,
+    RENAME_METHOD: RM_QUERY,
+    RENAME_PARAMETER: RP_QUERY,
+    RENAME_VARIABLE: RV_QUERY,
+    RENAME_ATTRIBUTE: RA_QUERY,
+    CHANGE_RETURN_TYPE: CRT_QUERY,
+    CHANGE_PARAMETER_TYPE: CPT_QUERY,
+    CHANGE_VARIABLE_TYPE: CVT_QUERY,
+    CHANGE_ATTRIBUTE_TYPE: CAT_QUERY,
 }
