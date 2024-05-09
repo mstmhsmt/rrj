@@ -3,7 +3,7 @@
 '''
   ref_keys.py
 
-  Copyright 2022 Chiba Institute of Technology
+  Copyright 2022-2024 Chiba Institute of Technology
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ from .common import CHANGE_RETURN_TYPE
 from .common import CHANGE_PARAMETER_TYPE, CHANGE_VARIABLE_TYPE, CHANGE_ATTRIBUTE_TYPE
 from .common import get_type_sig as _get_type_sig
 from .ref_key_queries import QUERY_TBL
+from .ref import Ref, Desc
 
 logger = logging.getLogger()
 
@@ -146,38 +147,6 @@ def get_dims_(row):
     except Exception:
         pass
     return x
-
-
-class Desc(object):
-    def __init__(self, offset, length=0, name=None, loc=None):
-        self.offset = offset if isinstance(offset, int) else int(offset)
-        self.length = length if isinstance(length, int) else int(length)
-        self.name = name
-        self.loc = loc
-
-    def to_dict(self):
-        d = {'offset': self.offset}
-        if self.length > 0:
-            d['length'] = self.length
-        if self.name is not None:
-            d['name'] = self.name
-        if self.loc is not None:
-            d['loc'] = self.loc
-        return d
-
-
-class Ref(object):
-    def __init__(self, key, desc=None, desc_=None):
-        self.key = key
-        self.desc = desc
-        self.desc_ = desc_
-
-    def to_dict(self):
-        d = {'key': self.key}
-        if self.desc is not None and self.desc_ is not None:
-            d['desc'] = self.desc.to_dict()
-            d['desc_'] = self.desc_.to_dict()
-        return d
 
 
 def proc_RM(row):

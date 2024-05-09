@@ -3,7 +3,7 @@
 '''
   common.py
 
-  Copyright 2022 Chiba Institute of Technology
+  Copyright 2022-2024 Chiba Institute of Technology
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ from .conf import VAR_DIR, FACT_DIR, LOG_DIR, FB_DIR
 from .conf import ONT_DIR, WORK_DIR, REFACT_DIR
 from .conf import VIRTUOSO_PW, VIRTUOSO_PORT
 
-
 RENAME_METHOD = 'Rename Method'
 RENAME_PARAMETER = 'Rename Parameter'
 RENAME_VARIABLE = 'Rename Variable'
@@ -35,6 +34,17 @@ CHANGE_RETURN_TYPE = 'Change Return Type'
 CHANGE_PARAMETER_TYPE = 'Change Parameter Type'
 CHANGE_VARIABLE_TYPE = 'Change Variable Type'
 CHANGE_ATTRIBUTE_TYPE = 'Change Attribute Type'
+
+REFACTORING_LIST = [
+    RENAME_METHOD,
+    RENAME_PARAMETER,
+    RENAME_VARIABLE,
+    RENAME_ATTRIBUTE,
+    CHANGE_RETURN_TYPE,
+    CHANGE_PARAMETER_TYPE,
+    CHANGE_VARIABLE_TYPE,
+    CHANGE_ATTRIBUTE_TYPE,
+]
 
 SIG_TBL = {
     'boolean': 'Z',
