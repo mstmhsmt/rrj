@@ -21,6 +21,7 @@
 __author__ = 'Masatomo Hashimoto <m.hashimoto@stair.center>'
 
 import os
+import json
 import shutil
 from datetime import datetime
 from uuid import uuid4
@@ -137,3 +138,14 @@ def is_virtuoso_running(port):
             logger.warning(f'{e}: port={port}')
             pass
     return b
+
+
+def read_json(data_path):
+    d = None
+    try:
+        with open(data_path, 'r') as f:
+            d = json.load(f)
+    except Exception as e:
+        logger.warning(f'{data_path}: {e}')
+
+    return d

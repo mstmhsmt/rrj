@@ -24,6 +24,72 @@ from .common import RENAME_METHOD, RENAME_PARAMETER, RENAME_VARIABLE, RENAME_ATT
 from .common import CHANGE_RETURN_TYPE
 from .common import CHANGE_PARAMETER_TYPE, CHANGE_VARIABLE_TYPE, CHANGE_ATTRIBUTE_TYPE
 
+DTOR_QUERY = '''DEFINE input:inference "ont.cpi"
+PREFIX ver:  <%(ver_ns)s>
+PREFIX java: <%(java_ns)s>
+PREFIX src:  <%(src_ns)s>
+
+SELECT DISTINCT ?ver ?loc ?cfqn ?mname ?msig ?vname ?vtyname ?dims ?offset ?length
+WHERE {
+GRAPH <%(graph_uri)s> {
+  {
+    SELECT DISTINCT ?dtor ?vtyname ?dims
+    WHERE {
+      {
+        ?dtor a java:ForHeader ;
+              src:child1 ?vty .
+      }
+      UNION
+      {
+        ?dtor src:parent ?decl .
+        ?decl src:child1 ?vty .
+      }
+      UNION
+      {
+        ?dtor a java:CatchParameter ;
+              src:child1 ?vty .
+      }
+      ?vty a java:Type ;
+           a ?cat OPTION (INFERENCE NONE) .
+      {
+        GRAPH <http://codinuum.com/ont/cpi> {
+          ?cat rdfs:label ?vtyname0 .
+        }
+        BIND (STR(?vtyname0) AS ?vtyname)
+      }
+      UNION
+      {
+        ?vty java:name ?vtyname .
+      }
+      OPTIONAL {
+        ?vty java:dimensions ?dims .
+      }
+    }  GROUP BY ?dtor ?vtyname ?dims
+  }
+  ?dtor java:name ?vname ;
+        java:identOffset ?offset ;
+        java:identLength ?length ;
+        java:inMethodOrConstructor ?meth .
+  {
+    SELECT DISTINCT ?meth ?mname ?msig ?cfqn ?loc ?ver
+    WHERE {
+      ?meth a java:MethodOrConstructor ;
+            java:inTypeDeclaration ?tdecl ;
+            java:name ?mname ;
+            java:fullyQualifiedName ?mfqn ;
+            java:signature ?msig .
+
+      ?tdecl a java:TypeDeclaration ;
+             java:fullyQualifiedName ?cfqn ;
+             src:inFile/src:location ?loc ;
+             ver:version ?ver .
+
+    } GROUP BY ?meth ?mname ?msig ?cfqn ?loc ?ver
+  }
+}
+}
+'''
+
 RM_QUERY = '''DEFINE input:inference "ont.cpi"
 PREFIX ver:  <%(ver_ns)s>
 PREFIX jref: <%(jref_ns)s>
@@ -277,7 +343,7 @@ GRAPH <%(graph_uri)s> {
     }  GROUP BY ?dtor_ ?vtyname_ ?dims_
   }
   {
-    SELECT DISTINCT ?meth ?mname ?msig ?cfqn ?ver
+    SELECT DISTINCT ?meth ?mname ?msig ?cfqn ?ver ?loc
     WHERE {
       ?meth a java:MethodOrConstructor ;
             java:inTypeDeclaration ?tdecl ;
@@ -287,12 +353,13 @@ GRAPH <%(graph_uri)s> {
 
       ?tdecl a java:TypeDeclaration ;
              java:fullyQualifiedName ?cfqn ;
+             src:inFile/src:location ?loc ;
              ver:version ?ver .
 
-    } GROUP BY ?meth ?mname ?msig ?cfqn ?ver
+    } GROUP BY ?meth ?mname ?msig ?cfqn ?ver ?loc
   }
   {
-    SELECT DISTINCT ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_
+    SELECT DISTINCT ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_ ?loc_
     WHERE {
       ?meth_ a java:MethodOrConstructor ;
              java:inTypeDeclaration ?tdecl_ ;
@@ -302,9 +369,10 @@ GRAPH <%(graph_uri)s> {
 
       ?tdecl_ a java:TypeDeclaration ;
               java:fullyQualifiedName ?cfqn_ ;
+              src:inFile/src:location ?loc_ ;
               ver:version ?ver_ .
 
-    } GROUP BY ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_
+    } GROUP BY ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_ ?loc_
   }
   ?ver ver:next ?ver_ .
   OPTIONAL {
@@ -313,8 +381,6 @@ GRAPH <%(graph_uri)s> {
     ?dtor_ java:identOffset ?offset_ ;
            java:identLength ?length_ .
   }
-  ?meth java:inTypeDeclaration/src:inFile/src:location ?loc .
-  ?meth_ java:inTypeDeclaration/src:inFile/src:location ?loc_ .
 }
 }
 '''

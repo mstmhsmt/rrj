@@ -282,6 +282,8 @@ class FB(object):
                 self.load_chgpat()
                 ref_json = os.path.join(REFACT_DIR, self._proj_id, 'ref_keys.json')
                 ref_keys.dump(self._proj_id, ref_json, pw=self._pw, port=self._port)
+                dtor_json = os.path.join(REFACT_DIR, self._proj_id, 'dtor_map.json')
+                ref_keys.dump_dtor_map(self._proj_id, dtor_json, pw=self._pw, port=self._port)
             except Exception as e:
                 self.set_status(f'failed to find refactoring patterns: {e}')
                 # self.reset_virtuoso(proj_id)

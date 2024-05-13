@@ -32,7 +32,7 @@ from .common import RENAME_METHOD, RENAME_PARAMETER, RENAME_VARIABLE, RENAME_ATT
 from .common import CHANGE_RETURN_TYPE
 from .common import CHANGE_PARAMETER_TYPE, CHANGE_VARIABLE_TYPE, CHANGE_ATTRIBUTE_TYPE
 from .common import get_type_sig as _get_type_sig
-from .ref_key_queries import QUERY_TBL
+from .ref_key_queries import QUERY_TBL, DTOR_QUERY
 from .ref import Ref, Desc
 
 logger = logging.getLogger()
@@ -147,6 +147,32 @@ def get_dims_(row):
     except Exception:
         pass
     return x
+
+
+def proc_DTOR(row):
+    vname = row['vname']
+    dims = get_dims(row)
+    vty = '[' * dims + get_type_sig(row['vtyname'])
+    cfqn = row['cfqn'].replace('$', '.')
+    mname = setup_mname(row['mname'], cfqn)
+    msig = reduce_msig(row['msig'])
+    ver = row['ver']
+    cid = get_localname(ver)
+    key = f'{vname}:{vty}'
+    meth = f'{mname}{msig}'
+    loc = row.get('loc', None)
+    offset = row.get('offset', None)
+    length = row.get('length', None)
+
+    d = {
+        'meth': meth,
+        'class': cfqn,
+        'loc': loc,
+        'offset': offset,
+        'length': length,
+    }
+
+    return cid, key, d
 
 
 def proc_RM(row):
@@ -348,6 +374,41 @@ def dump(proj_id, out_file,
             rd = r.to_dict()
             if rd not in rl:
                 rl.append(rd)
+
+    logger.info(f'dumping into "{out_file}"...')
+    with open(out_file, 'w') as f:
+        json.dump(tbl, f)
+
+
+def dump_dtor_map(proj_id, out_file,
+                  method='odbc', pw=VIRTUOSO_PW, port=VIRTUOSO_PORT):
+
+    driver = sparql.get_driver(method, pw=pw, port=port)
+
+    graph_uri = FB_NS + proj_id
+
+    qtbl = NS_TBL.copy()
+    qtbl['graph_uri'] = graph_uri
+
+    tbl = {}  # cid -> key -> (loc * offset * length) list
+
+    query = DTOR_QUERY % qtbl
+
+    for _, row in driver.query(query):
+        cid, key, r = proc_DTOR(row)
+        logger.debug(f'{cid} {key} {r}')
+        try:
+            ktbl = tbl[cid]
+        except KeyError:
+            ktbl = {}
+            tbl[cid] = ktbl
+        try:
+            rl = ktbl[key]
+        except KeyError:
+            rl = []
+            ktbl[key] = rl
+        if r not in rl:
+            rl.append(r)
 
     logger.info(f'dumping into "{out_file}"...')
     with open(out_file, 'w') as f:

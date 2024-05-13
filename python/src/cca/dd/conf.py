@@ -18,3 +18,5 @@ FACT_DIR = os.path.join(VAR_DIR, 'fact')
 WORK_DIR = os.path.join(VAR_DIR, 'work')
 
 REFACT_DIR = os.path.join(VAR_DIR, 'refactoring')
+
+PARSER_CMD = '/opt/cca/bin/parsesrc.opt'
