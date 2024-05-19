@@ -22,7 +22,8 @@ import cca.d3j.merge_delta as merge_delta
 # logger = logging.getLogger()
 logger = mp.get_logger()
 
-LOGGING_FORMAT = '[%(asctime)s][%(processName)s][%(levelname)s][%(funcName)s] %(message)s'
+LOGGING_FORMAT = ('[%(asctime)s][%(processName)s]'
+                  '[%(levelname)s][%(module)s][%(funcName)s] %(message)s')
 NPROCS = 2
 
 SAMPLES_DIR = 'samples'

@@ -34,6 +34,7 @@ from .scan_oracle import scan_oracle
 from cca.ccautil.proc import system
 from cca.ccautil.sloccount import sloccount_for_lang
 from cca.ccautil.common import setup_logger, DEFAULT_LOGGING_LEVEL
+from cca.ccautil.java_token_diff import all_different
 
 logger = logging.getLogger()
 
@@ -147,9 +148,9 @@ class Executor(object):
     def extract_merge_scenario(self, proj_id, cid, ref):
         d = None
         pathb, path1 = self.execute_ref(proj_id, cid, ref)
-        if pathb is not None and path1 is not None:
+        if pathb is not None and path1 is not None and all_different([pathb, path1]):
             pathm, path2 = self.execute_ref(proj_id, cid, ref, inv=True)
-            if pathm is not None and path2 is not None:
+            if pathm is not None and path2 is not None and all_different([pathm, path2]):
                 d = self.make_merge_scenario(proj_id, cid, pathb, path1, path2, pathm)
                 d['key'] = ref.key
         return d
@@ -230,8 +231,8 @@ class Executor(object):
                         dl.append(d)
 
                     for x_ in dtor_map.get(cid_, {}).get(vt_, []):
-                        logger.info(f'x_={x_}')
                         if x_['meth'] == meth_ and x_['class'] == cfqn_:
+                            logger.info(f'x_={x_}')
                             d_ = {
                                 'offset': x_['offset'],
                                 'length': x_['length'],

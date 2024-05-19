@@ -49,7 +49,7 @@ class Desc(object):
         self.loc = loc
 
     def get_id(self):
-        n = f'{self.offset}-{self.length}-{self.name}'
+        n = f'{self.offset}-{self.name}'
         return n
 
     def __str__(self):
@@ -104,7 +104,7 @@ class Ref(object):
     def get_id(self):
         n = get_ref_abbrev(self.key)
         if self.desc is not None:
-            n += f'-{self.desc.get_id()}'
+            n += f'-{self.desc.get_id()}-{self.desc_.get_id()}'
         return n
 
     def __str__(self):
