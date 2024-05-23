@@ -86,11 +86,11 @@ def divide(ds, n, get_weight=get_weight):
         return result
 
 
-def init_proc(engine, log_level, strategy):
+def init_proc(engine, log_level, suffix, strategy):
     merge_engines.RESOLVE_STRATEGY = strategy
     pid = mp.current_process().name
     log_dir = os.path.join(LOG_DIR, engine)
-    log_file = os.path.join(log_dir, f'mx.{engine}.{pid}.log')
+    log_file = os.path.join(log_dir, f'mx.{engine}.{pid}{suffix}.log')
     fh = logging.FileHandler(log_file, mode='w', encoding='utf-8')
     fh.setLevel(log_level)
     fmt = logging.Formatter(LOGGING_FORMAT)
@@ -209,7 +209,7 @@ def merge(do_merge, merge_data, samples_dir=SAMPLES_DIR,
 
 def analyze(args_kw):
     args, kw = args_kw
-    engine, tid, ds, out_dir = args
+    engine, tid, ds, out_dir, suffix = args
 
     do_merge = ENGINE_TBL[engine]
 
@@ -229,7 +229,7 @@ def analyze(args_kw):
         get_list(tbl, proj_id).append(ret)
         count += 1
 
-    out_path = os.path.join(out_dir, f'{pid}-{tid}.json')
+    out_path = os.path.join(out_dir, f'{pid}-{tid}{suffix}.json')
     with open(out_path, 'w') as f:
         json.dump(tbl, f)
 
@@ -237,7 +237,7 @@ def analyze(args_kw):
 
 
 def run(engine, tasks, samples_dir, out_dir, nprocs=NPROCS, no_eval=False,
-        rough_eval=False, verbose=False, debug=False, log_level=None,
+        rough_eval=False, verbose=False, debug=False, log_level=None, suffix='',
         check_patch=False, strategy=merge_engines.RESOLVE_WITH_B):
     nmerges = 0
 
@@ -251,7 +251,7 @@ def run(engine, tasks, samples_dir, out_dir, nprocs=NPROCS, no_eval=False,
     initargs = None
     if log_level is not None:
         init = init_proc
-        initargs = (engine, log_level, strategy)
+        initargs = (engine, log_level, suffix, strategy)
 
     done = 0
 
@@ -265,7 +265,7 @@ def run(engine, tasks, samples_dir, out_dir, nprocs=NPROCS, no_eval=False,
           'check_patch': check_patch}
 
     for tid, task in enumerate(tasks):
-        xl.append(((engine, tid, task, out_dir), kw))
+        xl.append(((engine, tid, task, out_dir, suffix), kw))
 
     with mp.Pool(processes=nprocs, initializer=init, initargs=initargs) as pool:
         for pid, tid, n in pool.imap_unordered(analyze, xl, chunksize=1):
@@ -295,6 +295,9 @@ def main():
 
     parser.add_argument('--samples', dest='samples_dir', default=SAMPLES_DIR,
                         help='specify samples directory')
+
+    parser.add_argument('--suffix', dest='suffix', default='',
+                        help='specify suffix of log file and intermediate JSONs')
 
     parser.add_argument('-t', '--task-size', dest='task_size', type=int,
                         default=4,
@@ -350,7 +353,7 @@ def main():
         log_level = logging.DEBUG
         check_patch = True
 
-    log_file = os.path.join(log_dir, f'mx.{args.engine}.log')
+    log_file = os.path.join(log_dir, f'mx.{args.engine}{args.suffix}.log')
     fh = logging.FileHandler(log_file, mode='w', encoding='utf-8')
     fh.setLevel(log_level)
     fmt = logging.Formatter(LOGGING_FORMAT)
@@ -416,7 +419,7 @@ def main():
 
     run(engine, tasks, samples_dir, out_dir, nprocs=nprocs,
         no_eval=no_eval, rough_eval=rough_eval,
-        verbose=verbose, debug=args.debug,
+        verbose=verbose, debug=args.debug, suffix=args.suffix,
         check_patch=check_patch, log_level=log_level, strategy=strategy)
 
 
