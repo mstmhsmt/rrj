@@ -204,7 +204,7 @@ def main():
                       no_rename_rectification=args.no_rename_rectification,
                       no_binding_trace=True,
                       strict_rr=True,
-                      no_name_resolution=False,
+                      no_implicit_name_resolution=False,
                       dump_delta=False,
                       fact_for_delta=False,
                       keep_going=keep_going,
