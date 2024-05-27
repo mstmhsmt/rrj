@@ -56,7 +56,7 @@ class Desc(object):
         s = f'offset={self.offset} length={self.length} name={self.name} loc={self.loc}'
         return s
 
-    def get_options(self, ws_path, proj_path, ref):
+    def get_options(self, ws_path, proj_path, ref, mangler=None, forced_name=None):
         opts = BASE_OPTIONS
         ok = False
         match ref:
@@ -65,7 +65,13 @@ class Desc(object):
                     opts += f' -Dosgi.instance.area={ws_path}'
                     opts += f' -Drefactoring.name={ref}'
                     opts += f' -Dexpression.offset={self.offset}'
-                    opts += f' -Dvariable.name={self.name}'
+                    if forced_name is not None:
+                        name = forced_name
+                    else:
+                        name = self.name
+                    if mangler is not None:
+                        name = mangler(name)
+                    opts += f' -Dvariable.name={name}'
                     ok = True
 
         if ok and self.loc is not None:
@@ -114,14 +120,22 @@ class Ref(object):
     def has_descs(self):
         return self.desc is not None and self.desc_ is not None
 
-    def get_options(self, ws_path, proj_path):
+    def get_options(self, ws_path, proj_path, mangler=None, swap=False):
         ref = get_ref(self.key)
-        opts = self.desc.get_options(ws_path, proj_path, ref)
+        if swap:
+            name = self.desc_.name
+        else:
+            name = None
+        opts = self.desc.get_options(ws_path, proj_path, ref, mangler=mangler, forced_name=name)
         return opts
 
-    def get_inv_options(self, ws_path, proj_path):
+    def get_options_(self, ws_path, proj_path, mangler=None, swap=False):
         ref = get_ref(self.key)
-        opts = self.desc_.get_options(ws_path, proj_path, ref)
+        if swap:
+            name = self.desc.name
+        else:
+            name = None
+        opts = self.desc_.get_options(ws_path, proj_path, ref, mangler=mangler, forced_name=name)
         return opts
 
     def to_dict(self):

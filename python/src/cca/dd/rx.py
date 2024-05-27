@@ -77,6 +77,16 @@ def load_pathtbl(path):
     return tbl
 
 
+def mangleB(i):
+    i_ = f'_RxB_{i}'
+    return i_
+
+
+def mangleM(i):
+    i_ = f'_RxM_{i}'
+    return i_
+
+
 class Executor(object):
     def __init__(self, samples_path, ref_dir=REFACT_DIR):
         logger.info(f'samples_path={samples_path}')
@@ -88,10 +98,13 @@ class Executor(object):
         self.ref_dir = ref_dir
         self.merge_scenario_count = 0
 
-    def execute_ref(self, proj_id, cid, ref, inv=False):
+    def execute_ref(self, proj_id, cid, ref, inv=False, swap=False, mangler=None):
+        mangling = ''
+        if mangler is not None:
+            mangling = f'{mangler('')}'
         if inv:
             suffix = '-after'
-            get_opts = ref.get_inv_options
+            get_opts = ref.get_options_
             src_loc = ref.desc_.loc
         else:
             suffix = '-before'
@@ -102,8 +115,8 @@ class Executor(object):
         ws_path = os.path.join(WORK_DIR, proj_id, cid)
         proj_path = os.path.join(self.samples_path, proj_id, f'{cid}{suffix}')
         ensure_dir(ws_path)
-        proj_name = f'{ref_id}{suffix}'
-        opts = get_opts(ws_path, proj_path) + f' -Dproject.name={proj_name}'
+        proj_name = f'{ref_id}{suffix}{mangling}'
+        opts = get_opts(ws_path, proj_path, mangler, swap=swap) + f' -Dproject.name={proj_name}'
         cmd = f'java {opts} -jar {RX_JAR_PATH}'
         logger.debug(f'cmd={cmd}')
         debug_flag = logger.getEffectiveLevel() == logging.DEBUG
@@ -145,14 +158,36 @@ class Executor(object):
         }
         return d
 
-    def extract_merge_scenario(self, proj_id, cid, ref):
+    def extract_merge_scenario(self, proj_id, cid, ref, mangle=True):
         d = None
-        pathb, path1 = self.execute_ref(proj_id, cid, ref)
-        if pathb is not None and path1 is not None and all_different([pathb, path1]):
+        if mangle:
+            pathb, pathb_ = self.execute_ref(proj_id, cid, ref,
+                                             swap=True, mangler=mangleB)
+            if pathb is None or pathb_ is None or not all_different([pathb, pathb_]):
+                return
+            pathb, path1 = self.execute_ref(proj_id, cid, ref,
+                                            mangler=mangleM)
+            if pathb is None or path1 is None or not all_different([pathb, path1]):
+                return
+            pathm, pathm_ = self.execute_ref(proj_id, cid, ref,
+                                             inv=True, swap=True, mangler=mangleM)
+            if pathm is None or pathm_ is None or not all_different([pathm, pathm_]):
+                return
+            pathm, path2 = self.execute_ref(proj_id, cid, ref,
+                                            inv=True, mangler=mangleB)
+            if pathm is None or path2 is None or not all_different([pathm, path2]):
+                return
+            d = self.make_merge_scenario(proj_id, cid, pathb_, path1, path2, pathm_)
+            d['key'] = ref.key
+        else:
+            pathb, path1 = self.execute_ref(proj_id, cid, ref)
+            if pathb is None or path1 is None or not all_different([pathb, path1]):
+                return
             pathm, path2 = self.execute_ref(proj_id, cid, ref, inv=True)
-            if pathm is not None and path2 is not None and all_different([pathm, path2]):
-                d = self.make_merge_scenario(proj_id, cid, pathb, path1, path2, pathm)
-                d['key'] = ref.key
+            if pathm is None or path2 is None or not all_different([pathm, path2]):
+                return
+            d = self.make_merge_scenario(proj_id, cid, pathb, path1, path2, pathm)
+            d['key'] = ref.key
         return d
 
     def execute_refs(self, scenarios_path):
