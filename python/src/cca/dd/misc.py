@@ -64,7 +64,7 @@ def rm(path):
         try:
             os.remove(path)
         except Exception:
-            logger.warning('failed to remove "{}"'.format(path))
+            logger.warning(f'failed to remove "{path}"')
             stat = 1
     return stat
 
@@ -78,7 +78,7 @@ def rmdir(path):
             else:
                 shutil.rmtree(path)
         except Exception:
-            logger.warning('failed to remove "{}"'.format(path))
+            logger.warning(f'failed to remove "{path}"')
             stat = 1
     return stat
 
@@ -89,7 +89,7 @@ def ensure_dir(d):
         try:
             os.makedirs(d)
         except Exception as e:
-            logger.warning('{}'.format(e))
+            logger.warning(f'{e}')
             b = False
     return b
 
@@ -101,7 +101,7 @@ def clear_dir(dpath, exclude=[]):
             if fn not in exclude:
                 p = os.path.join(dpath, fn)
                 rc = 0
-                logger.info('removing "{}"...'.format(p))
+                logger.info(f'removing "{p}"...')
                 if os.path.isdir(p):
                     rc = rmdir(p)
                 else:
