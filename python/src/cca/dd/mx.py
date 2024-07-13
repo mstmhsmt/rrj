@@ -112,8 +112,11 @@ class DummyRepo(object):
 def merge(do_merge, merge_data, samples_dir=SAMPLES_DIR,
           no_eval=False, rough_eval=False,
           verbose=False, debug=False,
-          check_patch=False, local_cache_name=None):
+          check_patch=False, local_cache_name=None,
+          suffix=''):
     # start = time.time()
+
+    work_dir = WORK_DIR
 
     mid = merge_data['id']
     rn = merge_data['proj_id']
@@ -142,7 +145,8 @@ def merge(do_merge, merge_data, samples_dir=SAMPLES_DIR,
 
     kwargs = {'use_eval': use_eval,
               'rough_eval': rough_eval,
-              'use_eval2': use_eval2
+              'use_eval2': use_eval2,
+              'work_dir': work_dir,
               }
 
     if do_merge == merge_engines.do_d3j:
@@ -166,7 +170,7 @@ def merge(do_merge, merge_data, samples_dir=SAMPLES_DIR,
         traceback.print_exc(file=sys.stdout)
 
     if do_merge == merge_engines.do_d3j and debug:
-        proj_work_dir = os.path.join(WORK_DIR, rn)
+        proj_work_dir = os.path.join(work_dir, rn)
         ensure_dir(proj_work_dir)
         root_path = os.path.realpath(D3J_DIR)
         bp = os.path.relpath(os.path.realpath(bpath), start=root_path)
@@ -219,6 +223,7 @@ def analyze(args_kw):
     pid = mp.current_process().name
 
     kw['local_cache_name'] = pid
+    kw['suffix'] = suffix
 
     count = 0
     for d in ds:

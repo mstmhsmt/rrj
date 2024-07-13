@@ -142,11 +142,11 @@ def main():
 
     ensure_dir(LOG_DIR)
 
-    log_proj_dir = os.path.join(LOG_DIR, f'{proj_id}')
+    log_proj_dir = os.path.join(LOG_DIR, 'rrj', f'{proj_id}')
 
     ensure_dir(log_proj_dir)
 
-    log_file = os.path.join(LOG_DIR, log_proj_dir, 'rrj.log')
+    log_file = os.path.join(log_proj_dir, 'rrj.log')
 
     setup_logger(logger,
                  log_level,

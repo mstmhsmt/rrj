@@ -113,8 +113,18 @@ def init_proc(log_level, suffix):
     misc.logger = logger
 
 
+class IdGen(object):
+    def __init__(self):
+        self.count = 0
+
+    def gen(self):
+        self.count += 1
+        logger.debug(f'{self.count}')
+        return self.count
+
+
 class Executor(object):
-    def __init__(self, samples_path, ref_dir=REFACT_DIR):
+    def __init__(self, id_gen, samples_path, ref_dir=REFACT_DIR):
         logger.info(f'samples_path={samples_path}')
         logger.info(f'ref_dir={ref_dir}')
         if not os.path.exists(ref_dir):
@@ -122,7 +132,7 @@ class Executor(object):
             raise FileNotFoundError
         self.samples_path = samples_path
         self.ref_dir = ref_dir
-        self.merge_scenario_count = 0
+        self.id_gen = id_gen
         self.cmd_cache = {}   # cmd -> path_tbl
         self.sloc_cache = {}  # path -> sloc
 
@@ -224,10 +234,9 @@ class Executor(object):
         return cmd
 
     def make_merge_scenario(self, proj_id, cid, pathb, path1, path2, pathm, add_sloc=True):
-        self.merge_scenario_count += 1
         instance = [pathb, path1, path2, pathm]
         d = {
-            'id': self.merge_scenario_count,
+            # 'id': self.id_gen.gen(),
             'proj_id': proj_id,
             'cid': cid,
             'instance': instance,
@@ -319,6 +328,7 @@ class Executor(object):
                                         logger.info(f'{ref}')
                                         d = self.extract_merge_scenario(proj_id, cid, ref)
                                         if d is not None:
+                                            d['id'] = self.id_gen.gen()
                                             merge_scenario_list.append(d)
                 except Exception:
                     traceback.print_exc()
@@ -328,10 +338,9 @@ class Executor(object):
             logger.info(f'dumping into {scenarios_path}...')
             with open(scenarios_path, 'w') as f:
                 json.dump(merge_scenario_list, f)
-            logger.info(f'dumped {self.merge_scenario_count} merge scenarios')
+            logger.info(f'dumped {len(merge_scenario_list)} merge scenarios')
 
     def execute_refs_mp(self, scenarios_path, nprocs=NPROCS, log_level=None):
-
         tasks = []
         total_nrefs = 0
 
@@ -384,6 +393,7 @@ class Executor(object):
                 for d in dl:
                     n += 1
                     if d is not None:
+                        d['id'] = self.id_gen.gen()
                         merge_scenario_list.append(d)
                 done += n
                 r = float(done) * 100.0 / total_nrefs
@@ -393,9 +403,10 @@ class Executor(object):
 
         if merge_scenario_list:
             logger.info(f'dumping into {scenarios_path}...')
+            merge_scenario_count = len(merge_scenario_list)
             with open(scenarios_path, 'w') as f:
                 json.dump(merge_scenario_list, f)
-            logger.info(f'dumped {self.merge_scenario_count} merge scenarios')
+            logger.info(f'dumped {merge_scenario_count} merge scenarios')
 
     def get_ref_candidates(self, proj_id, _cid, key):
         cid = f'{_cid}-before'
@@ -462,6 +473,7 @@ class Executor(object):
             return
 
         merge_scenario_tbl = {}
+        merge_scenario_count = 0
 
         oracle = scan_oracle(oracle_path, out_path='oracle.json')
 
@@ -500,12 +512,14 @@ class Executor(object):
                                 logger.info(f'ref={ref}')
                                 d = self.extract_merge_scenario(proj_id, cid, ref)
                                 if d is not None:
+                                    merge_scenario_count += 1
+                                    d['id'] = self.id_gen.gen()
                                     set_kkkklv(merge_scenario_tbl, proj_id, cid, verdict, k, d)
         if merge_scenario_tbl:
             logger.info(f'dumping into {scenarios_path}...')
             with open(scenarios_path, 'w') as f:
                 json.dump(merge_scenario_tbl, f)
-            logger.info(f'dumped {self.merge_scenario_count} merge scenarios')
+            logger.info(f'dumped {merge_scenario_count} merge scenarios')
 
     def execute_oracle_refs_mp(self, oracle_path, scenarios_path, target_refs=TARGET_REF_LIST,
                                nprocs=NPROCS, log_level=None):
@@ -571,6 +585,7 @@ class Executor(object):
         done = 0
 
         merge_scenario_tbl = {}
+        merge_scenario_count = 0
 
         with mp.Pool(processes=nprocs, initializer=init, initargs=initargs) as pool:
             for pid, tid, result in pool.imap_unordered(self.extract_merge_scenario_mp, xl,
@@ -580,6 +595,8 @@ class Executor(object):
                 for d in dl:
                     n += 1
                     if d is not None:
+                        merge_scenario_count += 1
+                        d['id'] = self.id_gen.gen()
                         set_kkkklv(merge_scenario_tbl, proj_id, cid, verdict, k, d)
                 done += n
                 r = float(done) * 100.0 / total_nrefs
@@ -591,7 +608,7 @@ class Executor(object):
             logger.info(f'dumping into {scenarios_path}...')
             with open(scenarios_path, 'w') as f:
                 json.dump(merge_scenario_tbl, f)
-            logger.info(f'dumped {self.merge_scenario_count} merge scenarios')
+            logger.info(f'dumped {merge_scenario_count} merge scenarios')
 
 
 def main():
@@ -641,22 +658,16 @@ def main():
 
     nprocs = args.nprocs
 
-    executor = Executor(args.samples_path)
+    executor = Executor(IdGen(), args.samples_path)
     # executor.execute_refs(args.merge_scenario_list_file)
     # executor.execute_oracle_refs(args.oracle, args.merge_scenario_tbl_file)
 
-    if nprocs > 1:
-        print('rx for rrj in progress...')
-        executor.execute_refs_mp(args.merge_scenario_list_file,
-                                 nprocs=nprocs, log_level=log_level)
-        print('\nrx for oracle in progress...')
-        executor.execute_oracle_refs_mp(args.oracle, args.merge_scenario_tbl_file,
-                                        nprocs=nprocs, log_level=log_level)
-    else:
-        print('rx for rrj in progress...')
-        executor.execute_refs(args.merge_scenario_list_file)
-        print('rx for oracle in progress...')
-        executor.execute_oracle_refs(args.oracle, args.merge_scenario_tbl_file)
+    print('rx for rrj in progress...')
+    executor.execute_refs_mp(args.merge_scenario_list_file,
+                             nprocs=nprocs, log_level=log_level)
+    print('\nrx for oracle in progress...')
+    executor.execute_oracle_refs_mp(args.oracle, args.merge_scenario_tbl_file,
+                                    nprocs=nprocs, log_level=log_level)
 
 
 if __name__ == '__main__':
