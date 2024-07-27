@@ -87,14 +87,14 @@ def get_queries(weak=False):
                     ([], [], [('param', 'param_'), ('v', 'v_')]), None,
                     None, False, 0),
 
-                   ('rename_field.rq', 'originalField', 'modifiedField', [],
-                    ['originalFieldName', 'modifiedFieldName',
-                     'originalClass', 'modifiedClass'],
-                    ([], [], [('vdtor', 'vdtor_')]), None, None, False, 0),
+                   # ('rename_field.rq', 'originalField', 'modifiedField', [],
+                   #  ['originalFieldName', 'modifiedFieldName',
+                   #   'originalClass', 'modifiedClass'],
+                   #  ([], [], [('vdtor', 'vdtor_')]), None, None, False, 0),
 
-                   ('rename_method.rq', 'originalMethod', 'modifiedMethod', [],
-                    ['originalMethodName', 'modifiedMethodName'],
-                    ([], [], [('meth', 'meth_')]), None, None, False, 0),
+                   # ('rename_method.rq', 'originalMethod', 'modifiedMethod', [],
+                   #  ['originalMethodName', 'modifiedMethodName'],
+                   #  ([], [], [('meth', 'meth_')]), None, None, False, 0),
 
                    # ('change_parameter_type.rq', 'originalType', 'modifiedType',
                    #  [('originalVariable', 'modifiedVariable')],
@@ -132,6 +132,24 @@ def get_queries(weak=False):
                    #   'originalMethod', 'modifiedMethod',
                    #   'originalClass', 'modifiedClass'],
                    #  ([], [], [('ty', 'ty_')]), None, None, False, 0),
+
+                   # ('extract_variable.rq', 'originalExpr', 'movedExpr',
+                   #  [('originalContext', 'modifiedContext'),
+                   #   ('originalExpr', 'extractedVariable')],
+                   #  ['extractedVariableName', 'originalMethodName',
+                   #   'extractedDtor',
+                   #   'modifiedMethodName', 'originalMethod', 'modifiedMethod'],
+                   #  ([], ['vdtor_', 'v_'], [('f', 'f_'), ('a', 'rhs_')]), None,
+                   #  None, False, 0),
+
+                   # ('inline_variable.rq', 'originalExpr', 'movedExpr',
+                   #  [('originalContext', 'modifiedContext'),
+                   #   ('eliminatedVariable', 'movedExpr')],
+                   #  ['eliminatedVariableName', 'originalMethodName',
+                   #   'eliminatedDtor',
+                   #   'modifiedMethodName', 'originalMethod', 'modifiedMethod'],
+                   #  (['vdtor', 'v'], [], [('f', 'f_'), ('rhs', 'a_')]), None,
+                   #  None, False, 0),
                 ],
                'c':
                [

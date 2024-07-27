@@ -18,6 +18,7 @@ from cca.d3j.merge_engines import ENGINE_TBL, ENGINE_LIST
 import cca.d3j.common as d3j_common
 import cca.d3j.merge_engines as merge_engines
 import cca.d3j.merge_delta as merge_delta
+import cca.d3j.d3pp as d3pp
 
 # logger = logging.getLogger()
 logger = mp.get_logger()
@@ -99,6 +100,7 @@ def init_proc(engine, log_level, suffix, strategy):
     logger.addHandler(fh)
     logger.propagate = False
     d3j_common.logger = logger
+    d3pp.set_logger(logger)
     merge_engines.logger = logger
     merge_delta.logger = logger
 
@@ -168,6 +170,7 @@ def merge(do_merge, merge_data, samples_dir=SAMPLES_DIR,
     except Exception as e:
         logger.error(str(e))
         traceback.print_exc(file=sys.stdout)
+        ret['failed'] = True
 
     if do_merge == merge_engines.do_d3j and debug:
         proj_work_dir = os.path.join(work_dir, rn)

@@ -1,0 +1,157 @@
+
+DEFINE input:inference "ont.cpi"
+
+PREFIX fb:   <http://codinuum.com/fb/>
+PREFIX ent:  <http://codinuum.com/fact/entity/>
+PREFIX rel:  <http://codinuum.com/fact/version/release/>
+PREFIX ext:  <http://codinuum.com/fact/external/>
+PREFIX src:  <http://codinuum.com/ontologies/2012/10/source-code-entity#>
+PREFIX ver:  <http://codinuum.com/ontologies/2012/10/versioning#>
+PREFIX chg:  <http://codinuum.com/ontologies/2012/10/primitive-change#>
+PREFIX java: <http://codinuum.com/ontologies/2012/10/java-entity#>
+PREFIX c:    <http://codinuum.com/ontologies/2012/10/c-entity#>
+
+# ?vdtor -- deleted variable declarator
+# ?v    -- declared variable
+# ?f_   -- mapped to the entity from which ?v is deleted
+# ?a_   -- moved expression
+
+SELECT DISTINCT ?a_ ?rhs ?vname ?vdtor ?f ?f_ ?v ?mname
+(?rhs AS ?originalExpr) (?a_ AS ?movedExpr) 
+(?f AS ?originalContext) (?f_ AS ?modifiedContext)
+(?v AS ?eliminatedVariable)
+(?vname AS ?eliminatedVariableName)
+(?vdtor AS ?eliminatedDtor)
+(?cname AS ?className)
+(?mname AS ?originalMethodName)
+(?mname_ AS ?modifiedMethodName)
+(?meth AS ?originalMethod)
+(?meth_ AS ?modifiedMethod)
+(CONCAT(?className,".",?methodName) AS ?GROUP)
+WHERE {
+
+  {
+    SELECT DISTINCT ?vdtor ?e_ ?meth ?mname ?v ?f ?vname ?rhs ?meth_ ?f_ ?a_
+    ?class ?class_ ?cname ?cname_
+    WHERE {
+
+      {
+        SELECT DISTINCT ?vdtor ?e_ ?meth ?mname ?v ?f ?vname ?rhs
+        ?class ?class_ ?cname ?cname_
+        WHERE {
+
+          ?vdtor a java:VariableDeclarator ;
+                 java:inClassBodyDeclaration ?meth ;
+                 java:initializer ?rhs ;
+                 chg:removal ?e_ .
+
+          ?meth a java:ClassBodyDeclaration ;
+                java:inTypeDeclaration ?class .
+
+          OPTIONAL {
+            ?meth java:name ?mname .
+          }
+
+          ?class a java:TypeDeclaration ;
+                 java:name ?cname ;
+                 chg:mappedTo ?class_ .
+
+          ?class_ a java:TypeDeclaration ;
+                  java:name ?cname_ .
+
+          ?v java:declaredBy ?vdtor ;
+             java:inClassBodyDeclaration ?meth ;
+             src:parent ?f ;
+             java:name ?vname .
+
+        } GROUP BY ?vdtor ?e_ ?meth ?mname ?v ?f ?vname ?rhs
+        ?class ?class_ ?cname ?cname_
+      }
+
+      ?e_ java:inTypeDeclaration* ?class_ .
+
+      ?meth_ #a java:ClassBodyDeclaration ;
+             java:inTypeDeclaration ?class_ .
+
+      FILTER (EXISTS {
+        ?meth chg:mappedTo ?meth_ .
+      } || EXISTS {
+        ?ivk a java:Invocation ;
+             java:inClassBodyDeclaration ?m ;
+             java:mayInvokeMethod ?meth .
+        {
+          ?meth_ ^chg:mappedTo ?m .
+        } UNION {
+          ?s_ src:parent ?meth_ ;
+              ^chg:mappedTo ?s .
+          ?s src:parent ?m .
+        }
+      })
+
+      {
+        ?f chg:movedTo ?f_ .
+      }
+      UNION
+      {
+        ?v chg:deletedOrPruned ?f_ .
+      }
+      UNION
+      {
+        ?v_ ^chg:relabeled ?v ;
+            src:parent ?f_ .
+      }
+
+      ?f_ java:inClassBodyDeclaration ?meth_ .
+
+      ?a_ src:parent ?f_ .
+
+    } GROUP BY ?vdtor ?e_ ?meth ?mname ?v ?f ?vname ?rhs ?meth_ ?f_ ?a_
+    ?class ?class_ ?cname ?cname_
+  }
+
+  FILTER NOT EXISTS {
+    ?x java:name ?vname ;
+       java:inClassBodyDeclaration ?meth_ .
+  }
+
+  FILTER (EXISTS {
+    ?rhs chg:mappedTo ?x_ .
+    ?a_ src:parent* ?x_ .
+  } || EXISTS {
+    ?a_ src:value ?h .
+    ?x src:parent* ?rhs ;
+       src:value ?h .
+  } || EXISTS {
+    ?a_ src:treeDigest ?h .
+    ?x src:parent* ?rhs ;
+       src:treeDigest ?h .
+  })
+
+  OPTIONAL {
+    ?meth_ java:name ?mname_ .
+  }
+
+
+  FILTER NOT EXISTS {
+    ?vdtor src:parent/src:parent [ a java:ForInit ];
+           java:inStatement ?for .
+    ?for a java:BasicForStatement ;
+         chg:mappedTo ?for_ .
+    ?for_ a java:ForStatement .
+  }
+
+  FILTER NOT EXISTS {
+    ?a_ java:inStatement ?for_ .
+    {
+      ?for_ a java:BasicForStatement ;
+            src:child0|src:child1|src:child2 ?for_x_ .
+    }
+    UNION
+    {
+      ?for_ a java:EnhancedForStatement ;
+            src:child0|src:child1 ?for_x_ .
+    }
+    ?a_ src:parent* ?for_x_ .
+  }
+
+}

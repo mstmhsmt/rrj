@@ -31,6 +31,7 @@ from .common import VIRTUOSO_PW, VIRTUOSO_PORT, abbrev, SIG_TBL
 from .common import RENAME_METHOD, RENAME_PARAMETER, RENAME_VARIABLE, RENAME_ATTRIBUTE
 from .common import CHANGE_RETURN_TYPE
 from .common import CHANGE_PARAMETER_TYPE, CHANGE_VARIABLE_TYPE, CHANGE_ATTRIBUTE_TYPE
+from .common import EXTRACT_VARIABLE, INLINE_VARIABLE
 from .common import get_type_sig as _get_type_sig
 from .ref_key_queries import QUERY_TBL, DTOR_QUERY
 from .ref import Ref, Desc
@@ -322,6 +323,58 @@ def proc_CAT(row):
     return cid, Ref(key)
 
 
+def proc_EV(row):
+    vname_ = row['vname_']
+    dims_ = get_dims_(row)
+    vty_ = '[' * dims_ + get_type_sig(row['vtyname_'])
+    cfqn_ = row['cfqn_'].replace('$', '.')
+    mname_ = setup_mname(row['mname_'], cfqn_)
+    msig_ = reduce_msig(row['msig_'])
+    ver = row['ver']
+    key = f'EV {vname_}:{vty_} {mname_}{msig_} {cfqn_}'
+    cid = get_cid(ver)
+
+    desc = None
+    desc_ = None
+    offset = row.get('offset', None)
+    offset_ = row.get('offset_', None)
+    length = row.get('length', None)
+    length_ = row.get('length_', None)
+    loc = row.get('loc', None)
+    loc_ = row.get('loc_', None)
+    if all([x is not None for x in [offset, length, loc, offset_, length_, loc_]]):
+        desc = Desc(offset, length, vname_, loc)
+        desc_ = Desc(offset_, length_, vname_, loc_)
+
+    return cid, Ref(key, desc, desc_)
+
+
+def proc_IV(row):
+    vname = row['vname']
+    dims = get_dims_(row)
+    vty = '[' * dims + get_type_sig(row['vtyname'])
+    cfqn_ = row['cfqn_'].replace('$', '.')
+    mname_ = setup_mname(row['mname_'], cfqn_)
+    msig_ = reduce_msig(row['msig_'])
+    ver = row['ver']
+    key = f'IV {vname}:{vty} {mname_}{msig_} {cfqn_}'
+    cid = get_cid(ver)
+
+    desc = None
+    desc_ = None
+    offset = row.get('offset', None)
+    offset_ = row.get('offset_', None)
+    length = row.get('length', None)
+    length_ = row.get('length_', None)
+    loc = row.get('loc', None)
+    loc_ = row.get('loc_', None)
+    if all([x is not None for x in [offset, length, loc, offset_, length_, loc_]]):
+        desc = Desc(offset, length, vname, loc)
+        desc_ = Desc(offset_, length_, vname, loc_)
+
+    return cid, Ref(key, desc, desc_)
+
+
 PROC_TBL = {
     RENAME_METHOD: proc_RM,
     RENAME_PARAMETER: proc_RP,
@@ -331,6 +384,9 @@ PROC_TBL = {
     CHANGE_PARAMETER_TYPE: proc_CPT,
     CHANGE_VARIABLE_TYPE: proc_CVT,
     CHANGE_ATTRIBUTE_TYPE: proc_CAT,
+
+    EXTRACT_VARIABLE: proc_EV,
+    INLINE_VARIABLE: proc_IV,
 }
 
 

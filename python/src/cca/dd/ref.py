@@ -74,6 +74,28 @@ class Desc(object):
                     opts += f' -Dvariable.name={name}'
                     ok = True
 
+            case 'ExtractVariable':
+                if self.name is not None:
+                    opts += f' -Dosgi.instance.area={ws_path}'
+                    opts += f' -Drefactoring.name={ref}'
+                    opts += f' -Dexpression.offset={self.offset}'
+                    opts += f' -Dexpression.length={self.length}'
+                    if forced_name is not None:
+                        name = forced_name
+                    else:
+                        name = self.name
+                    if mangler is not None:
+                        name = mangler(name)
+                    opts += f' -Dvariable.name={name}'
+                    ok = True
+
+            case 'InlineVariable':
+                if self.name is not None:
+                    opts += f' -Dosgi.instance.area={ws_path}'
+                    opts += f' -Drefactoring.name={ref}'
+                    opts += f' -Dexpression.offset={self.offset}'
+                    ok = True
+
         if ok and self.loc is not None:
             opts += f' -Dfile.path={os.path.join(os.path.abspath(proj_path), self.loc)}'
 

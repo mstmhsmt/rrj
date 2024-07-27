@@ -23,6 +23,7 @@ __author__ = 'Masatomo Hashimoto <m.hashimoto@stair.center>'
 from .common import RENAME_METHOD, RENAME_PARAMETER, RENAME_VARIABLE, RENAME_ATTRIBUTE
 from .common import CHANGE_RETURN_TYPE
 from .common import CHANGE_PARAMETER_TYPE, CHANGE_VARIABLE_TYPE, CHANGE_ATTRIBUTE_TYPE
+from .common import EXTRACT_VARIABLE, INLINE_VARIABLE
 
 DTOR_QUERY = '''DEFINE input:inference "ont.cpi"
 PREFIX ver:  <%(ver_ns)s>
@@ -735,6 +736,176 @@ GRAPH <%(graph_uri)s> {
 }
 '''
 
+EV_QUERY = '''DEFINE input:inference "ont.cpi"
+PREFIX ver:  <%(ver_ns)s>
+PREFIX jref: <%(jref_ns)s>
+PREFIX java: <%(java_ns)s>
+PREFIX src:  <%(src_ns)s>
+
+SELECT DISTINCT ?vname_ ?vtyname_ ?dims_
+                ?mname ?msig ?cfqn ?mname_ ?msig_ ?cfqn_ ?ver ?ver_
+                ?offset ?length ?offset_ ?length_ ?loc ?loc_
+WHERE {
+GRAPH <%(graph_uri)s> {
+[] a jref:ExtractVariable ;
+   a ?ref ;
+   jref:originalExpr ?expr ;
+   jref:movedExpr ?expr_ ;
+   jref:extractedDtor ?dtor_ ;
+   jref:extractedVariableName ?vname_ ;
+   jref:originalMethod ?meth ;
+   jref:modifiedMethod ?meth_ .
+  {
+    SELECT DISTINCT ?decl_ ?vtyname_ ?dims_
+    WHERE {
+      ?dtor_ src:parent ?decl_ .
+      ?decl_ src:child1 ?vty_ .
+      ?vty_ a java:Type ;
+            a ?cat_ OPTION (INFERENCE NONE) .
+      {
+        GRAPH <http://codinuum.com/ont/cpi> {
+          ?cat_ rdfs:label ?vtyname0_ .
+        }
+        BIND (STR(?vtyname0_) AS ?vtyname_)
+      }
+      UNION
+      {
+        ?vty_ java:name ?vtyname_ .
+      }
+      OPTIONAL {
+        ?vty_ java:dimensions ?dims_ .
+      }
+    }  GROUP BY ?dtor_ ?vtyname_ ?dims_
+  }
+  {
+    SELECT DISTINCT ?meth ?mname ?msig ?cfqn ?ver ?loc
+    WHERE {
+      ?meth a java:MethodOrConstructor ;
+            java:inTypeDeclaration ?tdecl ;
+            java:name ?mname ;
+            java:fullyQualifiedName ?mfqn ;
+            java:signature ?msig .
+
+      ?tdecl a java:TypeDeclaration ;
+             java:fullyQualifiedName ?cfqn ;
+             src:inFile/src:location ?loc ;
+             ver:version ?ver .
+
+    } GROUP BY ?meth ?mname ?msig ?cfqn ?ver ?loc
+  }
+  {
+    SELECT DISTINCT ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_ ?loc_
+    WHERE {
+      ?meth_ a java:MethodOrConstructor ;
+             java:inTypeDeclaration ?tdecl_ ;
+             java:name ?mname_ ;
+             java:fullyQualifiedName ?mfqn_ ;
+             java:signature ?msig_ .
+
+      ?tdecl_ a java:TypeDeclaration ;
+              java:fullyQualifiedName ?cfqn_ ;
+              src:inFile/src:location ?loc_ ;
+              ver:version ?ver_ .
+
+    } GROUP BY ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_ ?loc_
+  }
+  ?ver ver:next ?ver_ .
+  OPTIONAL {
+    ?expr java:exprOffset ?offset ;
+           java:exprLength ?length .
+    ?expr_ java:exprOffset ?offset_ ;
+           java:exprLength ?length_ .
+  }
+}
+}
+'''
+
+
+IV_QUERY = '''DEFINE input:inference "ont.cpi"
+PREFIX ver:  <%(ver_ns)s>
+PREFIX jref: <%(jref_ns)s>
+PREFIX java: <%(java_ns)s>
+PREFIX src:  <%(src_ns)s>
+
+SELECT DISTINCT ?vname ?vtyname ?dims
+                ?mname ?msig ?cfqn ?mname_ ?msig_ ?cfqn_ ?ver ?ver_
+                ?offset ?length ?offset_ ?length_ ?loc ?loc_
+WHERE {
+GRAPH <%(graph_uri)s> {
+[] a jref:ExtractVariable ;
+   a ?ref ;
+   jref:originalExpr ?expr ;
+   jref:movedExpr ?expr_ ;
+   jref:eliminatedDtor ?dtor ;
+   jref:eliminatedVariableName ?vname ;
+   jref:originalMethod ?meth ;
+   jref:modifiedMethod ?meth_ .
+  {
+    SELECT DISTINCT ?decl ?vtyname ?dims
+    WHERE {
+      ?dtor src:parent ?decl .
+      ?decl src:child1 ?vty .
+      ?vty a java:Type ;
+           a ?cat OPTION (INFERENCE NONE) .
+      {
+        GRAPH <http://codinuum.com/ont/cpi> {
+          ?cat rdfs:label ?vtyname0 .
+        }
+        BIND (STR(?vtyname0) AS ?vtyname)
+      }
+      UNION
+      {
+        ?vty java:name ?vtyname .
+      }
+      OPTIONAL {
+        ?vty java:dimensions ?dims .
+      }
+    }  GROUP BY ?dtor ?vtyname ?dims
+  }
+  {
+    SELECT DISTINCT ?meth ?mname ?msig ?cfqn ?ver ?loc
+    WHERE {
+      ?meth a java:MethodOrConstructor ;
+            java:inTypeDeclaration ?tdecl ;
+            java:name ?mname ;
+            java:fullyQualifiedName ?mfqn ;
+            java:signature ?msig .
+
+      ?tdecl a java:TypeDeclaration ;
+             java:fullyQualifiedName ?cfqn ;
+             src:inFile/src:location ?loc ;
+             ver:version ?ver .
+
+    } GROUP BY ?meth ?mname ?msig ?cfqn ?ver ?loc
+  }
+  {
+    SELECT DISTINCT ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_ ?loc_
+    WHERE {
+      ?meth_ a java:MethodOrConstructor ;
+             java:inTypeDeclaration ?tdecl_ ;
+             java:name ?mname_ ;
+             java:fullyQualifiedName ?mfqn_ ;
+             java:signature ?msig_ .
+
+      ?tdecl_ a java:TypeDeclaration ;
+              java:fullyQualifiedName ?cfqn_ ;
+              src:inFile/src:location ?loc_ ;
+              ver:version ?ver_ .
+
+    } GROUP BY ?meth_ ?mname_ ?msig_ ?cfqn_ ?ver_ ?loc_
+  }
+  ?ver ver:next ?ver_ .
+  OPTIONAL {
+    ?expr java:exprOffset ?offset ;
+           java:exprLength ?length .
+    ?expr_ java:exprOffset ?offset_ ;
+           java:exprLength ?length_ .
+  }
+}
+}
+'''
+
+
 QUERY_TBL = {
     RENAME_METHOD: RM_QUERY,
     RENAME_PARAMETER: RP_QUERY,
@@ -744,4 +915,7 @@ QUERY_TBL = {
     CHANGE_PARAMETER_TYPE: CPT_QUERY,
     CHANGE_VARIABLE_TYPE: CVT_QUERY,
     CHANGE_ATTRIBUTE_TYPE: CAT_QUERY,
+
+    EXTRACT_VARIABLE: EV_QUERY,
+    INLINE_VARIABLE: IV_QUERY,
 }
