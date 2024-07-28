@@ -35,6 +35,7 @@ from .common import LOG_DIR, REFACT_DIR, WORK_DIR
 from .misc import ensure_dir
 from .scan_oracle import scan_oracle
 from . import misc
+from .siteconf import MERGE_SCENARIO_ROOT
 from cca.ccautil.proc import system
 from cca.ccautil.sloccount import sloccount_for_lang
 from cca.ccautil.common import setup_logger, DEFAULT_LOGGING_LEVEL
@@ -234,7 +235,8 @@ class Executor(object):
         return cmd
 
     def make_merge_scenario(self, proj_id, cid, pathb, path1, path2, pathm, add_sloc=True):
-        instance = [pathb, path1, path2, pathm]
+        root = os.path.join(MERGE_SCENARIO_ROOT, proj_id, cid)
+        instance = [os.path.relpath(p, root) for p in [pathb, path1, path2, pathm]]
         d = {
             # 'id': self.id_gen.gen(),
             'proj_id': proj_id,
@@ -242,7 +244,10 @@ class Executor(object):
             'instance': instance,
         }
         if add_sloc:
-            slocs = [self.count_sloc(p) for p in instance]
+            def mkpath(rp):
+                return os.path.join(MERGE_SCENARIO_ROOT, proj_id, cid, rp)
+
+            slocs = [self.count_sloc(mkpath(x)) for x in instance]
             d['slocs'] = slocs
         return d
 

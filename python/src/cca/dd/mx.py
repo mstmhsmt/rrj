@@ -10,6 +10,7 @@ import traceback
 
 
 from .misc import read_json
+from .siteconf import MERGE_SCENARIO_ROOT
 from cca.d3j import diffviewer, diffviewer3
 from cca.d3j.siteconf import LOG_DIR, WORK_DIR, D3J_DIR
 from cca.d3j.common import get_list, is_valid_java, ensure_dir
@@ -122,8 +123,10 @@ def merge(do_merge, merge_data, samples_dir=SAMPLES_DIR,
 
     mid = merge_data['id']
     rn = merge_data['proj_id']
+    cid = merge_data['cid']
 
-    (bpath, ppath1, ppath2, mpath) = merge_data['instance']
+    bpath, ppath1, ppath2, mpath = (os.path.join(MERGE_SCENARIO_ROOT, rn, cid, rp)
+                                    for rp in merge_data['instance'])
 
     dummy_repo = DummyRepo(rn)
 
