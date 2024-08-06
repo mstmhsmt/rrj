@@ -391,9 +391,13 @@ def main():
     print(f'engine={engine}')
     print(f'nprocs={nprocs}')
     print(f'data={data}')
-    print(f'no_eval={no_eval}')
-    print(f'rough_eval={rough_eval}')
-    print(f'strategy={strategy}')
+    spec = ''
+    if no_eval:
+        spec += '[no_eval]'
+    if rough_eval:
+        spec += '[rough_eval]'
+    spec += f'[strategy={strategy}]'
+    print(spec)
 
     out_dir = os.path.join(WORK_DIR, 'json', engine)
     ensure_dir(out_dir)
