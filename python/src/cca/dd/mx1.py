@@ -191,7 +191,8 @@ def main():
     rough_eval = args.rough_eval
     check_patch = args.check_patch
 
-    log_dir = os.path.join(LOG_DIR, args.engine)
+    # log_dir = os.path.join(LOG_DIR, args.engine)
+    log_dir = LOG_DIR
 
     ensure_dir(log_dir)
 
@@ -200,7 +201,8 @@ def main():
         log_level = logging.DEBUG
         check_patch = True
 
-    log_file = os.path.join(log_dir, f'mx1.{args.engine}{args.suffix}.log')
+    log_file = os.path.join(log_dir,
+                            f'mx1.{args.engine}.{args.mid}{args.suffix}.log')
     fh = logging.FileHandler(log_file, mode='w', encoding='utf-8')
     fh.setLevel(log_level)
     fmt = logging.Formatter(LOGGING_FORMAT)
