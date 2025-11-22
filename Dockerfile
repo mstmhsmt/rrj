@@ -1,6 +1,6 @@
-FROM codinuum/cca:devel
+FROM codinuum/cca:base
 
-MAINTAINER mstmhsmt
+LABEL maintainer="mstmhsmt"
 
 WORKDIR /root
 
@@ -13,14 +13,14 @@ RUN set -x && \
             psmisc time parallel \
             locales locales-all nkf \
             maven pcregrep \
-            python3-distutils \
+            python3-setuptools \
             python3-psutil \
             python3-matplotlib \
             python3-networkx \
             lv \
             jq \
             curl subversion && \
-    pip3 install simplejson
+    pip3 install simplejson --break-system-packages
 
 # For installing helper scripts
 
@@ -29,7 +29,7 @@ COPY python /root/python
 RUN set -x && \
     cd /root/python && \
     python3 -m build && \
-    pip3 install dist/rrj-*.tar.gz && \
+    pip3 install dist/rrj-*.tar.gz --break-system-packages && \
     cd /root && \
     rm -r python
 
