@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    if misc.is_virtuoso_running():
+    if misc.is_virtuoso_running(args.port):
         fb_dir = os.path.join(FB_DIR, args.proj_id)
         v = virtuoso.base(dbdir=fb_dir, pw=args.pw, port=args.port)
         v.shutdown_server()
